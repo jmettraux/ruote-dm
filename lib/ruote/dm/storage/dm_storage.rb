@@ -76,6 +76,12 @@ module Dm
 
       @context = c
 
+      @dm_repository = c[:expstorage_dm_repository] || :default
+
+      DataMapper.repository(@dm_repository) do
+        DmExpression.auto_upgrade!
+      end
+
       subscribe(:expressions)
     end
 
@@ -114,6 +120,15 @@ module Dm
       all_filenames.inject('') do |s, fn|
         fexp = load_fexp(fn)
         s << "#{fn} => #{fexp.class}\n"
+      end
+    end
+
+    protected
+
+    def find (fei)
+
+      DataMapper.repository(@dm_repository) do
+        DmExpression.first(:fei => fei.to_s)
       end
     end
   end
