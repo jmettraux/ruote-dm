@@ -14,5 +14,10 @@ class StorageTest < Test::Unit::TestCase
 
     flunk
   end
+
+  def test_second
+
+    flunk
+  end
 end
 
