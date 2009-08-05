@@ -1,0 +1,25 @@
+
+= ruote-dm
+
+ruote 2.0 extension for DataMapper (dm) persistence
+
+
+== usage
+
+
+== license
+
+MIT
+
+
+== links
+
+http://datamapper.org/
+http://ruote.rubyforge.org/
+
+
+== feedback
+
+mailing list : http://groups.google.com/group/openwferu-users
+irc : irc.freenode.net #ruote
+

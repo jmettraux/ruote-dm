@@ -1,0 +1,15 @@
+
+= ruote-dm CREDITS.txt
+
+== authors
+
+- John Mettraux  http://jmettraux.wordpress.com
+
+== contributors
+
+== feedback
+
+== many thanks to
+
+- the DataMapper team
+
