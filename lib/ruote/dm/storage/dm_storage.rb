@@ -97,29 +97,41 @@ module Dm
 
     def []= (fei, fexp)
 
-      # TODO : implement me
+      DataMapper.repository(@dm_repository) do
+
+        e = find(fei) || DmExpression.new
+
+        e.fei = fei.to_s
+        e.wfid = fei.parent_wfid
+        e.expid = fei.expid
+        e.expclass = fexp.class.name
+        e.svalue = fexp
+
+        e.save
+      end
     end
 
     def [] (fei)
 
-      # TODO : implement me
+      if fexp = find(fei)
+        fexp.as_ruote_expression(@context)
+      else
+        nil
+      end
     end
 
     def delete (fei)
 
-      # TODO : implement me
+      if e = find(fei)
+        e.destroy
+      end
     end
 
     def size
 
-      all_filenames.size
-    end
-
-    def to_s
-
-      all_filenames.inject('') do |s, fn|
-        fexp = load_fexp(fn)
-        s << "#{fn} => #{fexp.class}\n"
+      DataMapper.repository(@dm_repository) do
+        #DmExpression.count
+        DmExpression.all.size # dm 0.9 :(
       end
     end
 
