@@ -42,14 +42,12 @@ module Dm
 
     property :fei, String, :key => true
     property :wfid, String, :index => :wfid
-    property :expid, String, :index => :expid
     property :expclass, String, :index => :expclass
-    property :svalue, Text
+    property :svalue, Text, :lazy => false
 
-    def svalue= (fexp)
-
-      attribute_set(:svalue, Base64.encode64(Marshal.dump(fexp)))
-    end
+    #def svalue= (fexp)
+    #  attribute_set(:svalue, Base64.encode64(Marshal.dump(fexp)))
+    #end
 
     def as_ruote_expression (context)
 
@@ -118,9 +116,8 @@ module Dm
 
         e.fei = fei.to_s
         e.wfid = fei.parent_wfid
-        e.expid = fei.expid
         e.expclass = fexp.class.name
-        e.svalue = fexp
+        e.svalue = Base64.encode64(Marshal.dump(fexp))
 
         e.save
       end

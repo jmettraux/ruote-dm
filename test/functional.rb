@@ -16,8 +16,11 @@ ruote = File.expand_path(File.dirname(__FILE__) + '/../../ruote') \
   unless File.exist?(ruote)
 
 require 'dm-core'
+require 'data_objects'
 
 DataMapper.setup(:default, 'mysql://localhost/test')
+#DataMapper::Logger.new(STDOUT, :debug)
+#DataObjects::Mysql.logger = DataObjects::Logger.new('dm.log', :debug)
 
 require File.join(ruote, *%w[ test functional test ])
 
