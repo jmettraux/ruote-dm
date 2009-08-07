@@ -24,6 +24,7 @@
 
 require 'base64'
 require 'dm-core'
+#require 'dm-aggregates'
 
 require 'ruote/engine/context'
 require 'ruote/queue/subscriber'
@@ -87,12 +88,26 @@ module Dm
 
     def find_expressions (query={})
 
-      # TODO : implement me
+      conditions = {}
 
-      # query[:wfid]
-      # query[:class]
+      if i = query[:wfid]
+        conditions[:wfid] = i
+      end
+      if c = query[:class]
+        conditions[:expclass] = c.to_s
+      end
 
-      # query[:responding_to]
+      fexps = DataMapper.repository(@dm_repository) {
+        DmExpression.all(conditions)
+      }.collect { |e|
+        e.as_ruote_expression(@context)
+      }
+
+      if m = query[:responding_to]
+        fexps = fexps.select { |fe| fe.respond_to?(m) }
+      end
+
+      fexps
     end
 
     def []= (fei, fexp)
@@ -131,7 +146,8 @@ module Dm
 
       DataMapper.repository(@dm_repository) do
         #DmExpression.count
-        DmExpression.all.size # dm 0.9 :(
+          # dm-aggregates is in dm-core and dm-core is no ruby 1.9.1 friend
+        DmExpression.all.size
       end
     end
 
