@@ -155,6 +155,14 @@ module Dm
       end
     end
 
+    def to_s
+
+      find_expressions.inject('') do |s, fexp|
+        s << "#{fexp.fei.to_s} => #{fexp.class}\n"
+        s
+      end
+    end
+
     protected
 
     def find (fei)
