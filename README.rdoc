@@ -7,6 +7,17 @@ ruote 2.0 extension for DataMapper (dm) persistence
 == usage
 
 
+== running tests
+
+  ruby test/test.rb
+
+to run unit tests
+
+  ruby test/functional.rb
+
+to run the full functional ruote suite (expects ruote 2.0 to be located next to ruote-dm/)
+
+
 == license
 
 MIT

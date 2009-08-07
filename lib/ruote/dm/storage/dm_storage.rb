@@ -151,6 +151,13 @@ module Dm
       end
     end
 
+    def purge
+
+      DataMapper.repository(@dm_repository) do
+        DmExpression.all.destroy!
+      end
+    end
+
     protected
 
     def find (fei)
