@@ -18,7 +18,7 @@ class ParticipantTest < Test::Unit::TestCase
     @participant = Ruote::Dm::DmParticipant.new({})
     @participant.context = {}
     #DataObjects::Mysql.logger = DataObjects::Logger.new(STDOUT, :debug)
-    DataObjects::Mysql.logger = DataObjects::Logger.new('dm.log', :debug)
+    #DataObjects::Mysql.logger = DataObjects::Logger.new('dm.log', :debug)
   end
   def teardown
     DataMapper.repository(:default) do
