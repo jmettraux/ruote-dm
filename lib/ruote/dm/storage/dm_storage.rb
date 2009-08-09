@@ -45,10 +45,6 @@ module Dm
     property :expclass, String, :index => :expclass
     property :svalue, Text, :lazy => false
 
-    #def svalue= (fexp)
-    #  attribute_set(:svalue, Base64.encode64(Marshal.dump(fexp)))
-    #end
-
     def as_ruote_expression (context)
 
       fe = Marshal.load(Base64.decode64(self.svalue))
@@ -56,7 +52,21 @@ module Dm
       fe
     end
 
-    def self.storage_name (repository_name = default_repository_name)
+    def self.from_ruote_expression (fexp)
+
+      e = DmExpression.first(:fei => fexp.fei.to_s) || DmExpression.new
+
+      e.fei = fexp.fei.to_s
+      e.wfid = fexp.fei.parent_wfid
+      e.expclass = fexp.class.name
+      e.svalue = Base64.encode64(Marshal.dump(fexp))
+
+      e.save
+    end
+
+    # Sets the table name for expressions to 'dm_expressions'.
+    #
+    def self.storage_name (repository_name=default_repository_name)
 
       'dm_expressions'
     end
@@ -112,15 +122,7 @@ module Dm
     def []= (fei, fexp)
 
       DataMapper.repository(@dm_repository) do
-
-        e = find(fei) || DmExpression.new
-
-        e.fei = fei.to_s
-        e.wfid = fei.parent_wfid
-        e.expclass = fexp.class.name
-        e.svalue = Base64.encode64(Marshal.dump(fexp))
-
-        e.save
+        DmExpression.from_ruote_expression(fexp)
       end
     end
 
