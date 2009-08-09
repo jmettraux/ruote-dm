@@ -80,6 +80,7 @@ module Dm
       DataMapper.repository(@dm_repository) do
         DmExpression.auto_upgrade!
       end
+        # this is costly
 
       subscribe(:expressions)
     end
