@@ -11,6 +11,4 @@ require 'test/unit'
 require 'rubygems'
 
 require File.join(File.dirname(__FILE__), 'connection')
-#require 'dm-core'
-#DataMapper.setup(:default, 'mysql://localhost/test')
 

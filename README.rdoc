@@ -6,16 +6,24 @@ ruote 2.0 extension for DataMapper (dm) persistence
 
 == usage
 
+well...
+
 
 == running tests
 
-  ruby test/test.rb
-
 to run unit tests
 
-  ruby test/functional.rb
+  ruby test/test.rb
 
-to run the full functional ruote suite (expects ruote 2.0 to be located next to ruote-dm/)
+to run functional tests, go to your ruote clone and run
+
+  ruby test/functional/test.rb --dm
+
+or, to disable expression caching
+
+  ruby test/functional/test.rb --dm -C
+
+Note that there are no functional tests for Ruote::Dm::DmParticipant
 
 
 == license
