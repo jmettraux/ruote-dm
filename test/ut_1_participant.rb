@@ -17,6 +17,8 @@ class ParticipantTest < Test::Unit::TestCase
   def setup
     @participant = Ruote::Dm::DmParticipant.new({})
     @participant.context = {}
+    #DataObjects::Mysql.logger = DataObjects::Logger.new(STDOUT, :debug)
+    DataObjects::Mysql.logger = DataObjects::Logger.new('dm.log', :debug)
   end
   def teardown
     DataMapper.repository(:default) do
@@ -36,12 +38,32 @@ class ParticipantTest < Test::Unit::TestCase
 
   def test_cancel
 
-    wi = new_wi('12345-678', '0_0', 'toto', { 'a' => 'A' })
+    wi = new_wi('12345-678', '0_0', 'alice', { 'a' => 'A' })
     @participant.consume(wi)
 
     @participant.cancel(wi.fei, nil)
 
     assert_equal 0, Ruote::Dm::DmWorkitem.all.size
+  end
+
+  def test_keywords
+
+    @participant.consume(new_wi('123', '0_0', 'alice', {
+      'animals' => %w[ lion boar beef zebra gnu ], 'cars' => { 'bmw' => true }
+    }))
+
+    assert_equal(
+      '|animals:|lion|boar|beef|zebra|gnu|cars:|bmw:true|participant:|',
+      Ruote::Dm::DmWorkitem.first.keywords)
+  end
+
+  def test_search
+
+    @participant.consume(new_wi('123', '0_0', 'alice', {
+      'animals' => %w[ lion boar beef zebra gnu ], 'cars' => { 'bmw' => true }
+    }))
+
+    assert_equal 1, Ruote::Dm::DmWorkitem.search('bmw:true').size
   end
 
   protected

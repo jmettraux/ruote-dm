@@ -50,7 +50,7 @@ module Dm
     property :dispatch_time, DateTime
     property :last_modified, DateTime
 
-    alias :dm_save :save
+    before :save, :pre_save
 
     def to_ruote_workitem
 
@@ -71,12 +71,6 @@ module Dm
       wi
     end
 
-    def save
-
-      self.last_modified = Time.now
-      dm_save
-    end
-
     def self.from_ruote_workitem (workitem)
 
       wi = DmWorkitem.first(:fei => fei.to_s) || DmWorkitem.new
@@ -88,6 +82,8 @@ module Dm
       wi.wi_fields = workitem.fields
 
       wi.dispatch_time ||= Time.now
+
+      #wi.keywords = ...
       #wi.last_modified = Time.now
         # done by DmWorkitem#save
 
@@ -97,7 +93,41 @@ module Dm
     def self.search (query)
     #def self.search (query, store_names)
 
-      # TODO : implement me (and flatten_keywords)
+      DmWorkitem.all(:keywords.like => "%#{query}%")
+    end
+
+    # Sets the table name for the workitems to 'dm_workitems'.
+    #
+    def self.storage_name (repository_name=default_repository_name)
+
+      'dm_workitems'
+    end
+
+    protected
+
+    # Steps done before the actual #save
+    #
+    def pre_save
+
+      self.last_modified = Time.now
+      self.keywords = determine_keywords(participant_name, wi_fields)
+    end
+
+    def determine_keywords (pname, fields)
+
+      dk(fields.merge('participant' => pname)).gsub(/\|+/, '|')
+    end
+
+    def dk (o)
+
+      case o
+      when Hash
+        "|#{o.keys.sort.collect { |k| "#{dk(k)}:#{dk(o[k])}" }.join('|')}|"
+      when Array
+        "|#{o.collect { |e| dk(e) }.join('|')}|"
+      else
+        o.to_s.gsub(/[\|:]/, '')
+      end
     end
   end
 
