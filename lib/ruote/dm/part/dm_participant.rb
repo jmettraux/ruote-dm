@@ -40,15 +40,17 @@ module Dm
     include DataMapper::Resource
 
     property :fei, String, :key => true
-    property :wfid, String, :index => :wfid
-    property :engine_id, String, :index => :engine_id
-    property :participant_name, String, :index => :participant_name
+    property :wfid, String, :index => :wfid, :nullable => false
+    property :engine_id, String, :index => :engine_id, :nullable => false
+    property :participant_name, String, :index => :participant_name, :nullable => false
 
-    property :wi_fields, Yaml
-    property :keywords, Text
+    property :wi_fields, Yaml, :nullable => false
+    property :keywords, Text, :nullable => false
 
-    property :dispatch_time, DateTime
-    property :last_modified, DateTime
+    property :dispatch_time, DateTime, :nullable => false
+    property :last_modified, DateTime, :nullable => false
+
+    property :store_name, String, :index => :store_name
 
     before :save, :pre_save
 
@@ -71,7 +73,7 @@ module Dm
       wi
     end
 
-    def self.from_ruote_workitem (workitem)
+    def self.from_ruote_workitem (workitem, store_name=nil)
 
       wi = DmWorkitem.first(:fei => fei.to_s) || DmWorkitem.new
 
@@ -87,13 +89,19 @@ module Dm
       #wi.last_modified = Time.now
         # done by DmWorkitem#save
 
+      wi.store_name = store_name
+
       wi.save
     end
 
-    def self.search (query)
+    def self.search (query, store_names=nil)
     #def self.search (query, store_names)
 
-      DmWorkitem.all(:keywords.like => "%#{query}%")
+      opts = {}
+      opts[:keywords.like] = "%#{query}%"
+      opts[:store_name] = Array(store_names) if store_names
+
+      DmWorkitem.all(opts)
     end
 
     # Sets the table name for the workitems to 'dm_workitems'.
@@ -136,9 +144,11 @@ module Dm
     include EngineContext
     include LocalParticipant
 
+    attr_reader :store_name
+
     def initialize (opts)
 
-      @name = opts[:participant_name]
+      @store_name = opts[:store_name]
     end
 
     def context= (c)
@@ -155,7 +165,7 @@ module Dm
     def consume (workitem)
 
       DataMapper.repository(@dm_repository) do
-        DmWorkitem.from_ruote_workitem(workitem)
+        DmWorkitem.from_ruote_workitem(workitem, @store_name)
       end
     end
 

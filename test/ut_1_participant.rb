@@ -53,8 +53,19 @@ class ParticipantTest < Test::Unit::TestCase
     }))
 
     assert_equal(
-      '|animals:|lion|boar|beef|zebra|gnu|cars:|bmw:true|participant:|',
+      '|animals:|lion|boar|beef|zebra|gnu|cars:|bmw:true|participant:alice|',
       Ruote::Dm::DmWorkitem.first.keywords)
+  end
+
+  def test_store_names
+
+    @participant.instance_variable_set(:@store_name, 'store0')
+      # just testing...
+
+    wi = new_wi('12345-678', '0_0', 'alice', { 'a' => 'A' })
+    @participant.consume(wi)
+
+    assert_equal 'store0', Ruote::Dm::DmWorkitem.first.store_name
   end
 
   def test_search
@@ -64,6 +75,20 @@ class ParticipantTest < Test::Unit::TestCase
     }))
 
     assert_equal 1, Ruote::Dm::DmWorkitem.search('bmw:true').size
+  end
+
+  def test_search_with_store_names
+
+    Ruote::Dm::DmWorkitem.from_ruote_workitem(
+      new_wi('123', '0_0', 'alice', { 'a' => 'A' }), 'store0')
+    Ruote::Dm::DmWorkitem.from_ruote_workitem(
+      new_wi('124', '0_0', 'alice', { 'a' => 'A' }), 'store1')
+    Ruote::Dm::DmWorkitem.from_ruote_workitem(
+      new_wi('125', '0_0', 'bob', { 'a' => 'A' }), 'store0')
+
+    assert_equal 3, Ruote::Dm::DmWorkitem.search('a:A').size
+    assert_equal 1, Ruote::Dm::DmWorkitem.search('a:A', %w[ store1 ]).size
+    assert_equal 2, Ruote::Dm::DmWorkitem.search('a:A', %w[ store0 ]).size
   end
 
   protected
@@ -76,6 +101,7 @@ class ParticipantTest < Test::Unit::TestCase
     wi = Ruote::Workitem.new
     wi.fei = fei
     wi.fields = fields
+    wi.participant_name = participant_name
 
     wi
   end
