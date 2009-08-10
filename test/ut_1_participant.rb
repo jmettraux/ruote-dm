@@ -59,13 +59,21 @@ class ParticipantTest < Test::Unit::TestCase
 
   def test_store_names
 
+    wi = new_wi('12346-678', '0_0', 'bob', { 'b' => 'B' })
+    @participant.consume(wi)
+
     @participant.instance_variable_set(:@store_name, 'store0')
       # just testing...
 
     wi = new_wi('12345-678', '0_0', 'alice', { 'a' => 'A' })
     @participant.consume(wi)
 
-    assert_equal 'store0', Ruote::Dm::DmWorkitem.first.store_name
+
+    assert_equal 1, @participant.size
+
+    assert_equal(
+      [ 'store0', nil ],
+      Ruote::Dm::DmWorkitem.all.collect { |dwi| dwi.store_name })
   end
 
   def test_search
@@ -87,6 +95,7 @@ class ParticipantTest < Test::Unit::TestCase
       new_wi('125', '0_0', 'bob', { 'a' => 'A' }), 'store0')
 
     assert_equal 3, Ruote::Dm::DmWorkitem.search('a:A').size
+    assert_equal 1, Ruote::Dm::DmWorkitem.search('a:A', 'store1').size
     assert_equal 1, Ruote::Dm::DmWorkitem.search('a:A', %w[ store1 ]).size
     assert_equal 2, Ruote::Dm::DmWorkitem.search('a:A', %w[ store0 ]).size
   end

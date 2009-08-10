@@ -29,6 +29,16 @@ require 'ruote/dm/storage/dm_storage'
 module Ruote
 module Dm
 
+  #
+  # A ruote engine that persists its expressions into a DataMapper
+  # repository.
+  #
+  # The repository defaults to :default, but can be set to another repository
+  # name via the :expstorage_dm_repository context option passed at engine
+  # initialization.
+  #
+  # The bulk of the work is done by Ruote::Dm::DmStorage
+  #
   class DmPersistedEngine < FsPersistedEngine
 
     protected
@@ -40,3 +50,4 @@ module Dm
   end
 end
 end
+

@@ -1,8 +1,8 @@
 
 [o] storage (expressions)
-[ ] storage : find_expressions
+[o] storage : find_expressions
 
-[ ] DmParticipant (workitems)
+[o] DmParticipant (workitems)
 [ ] scheduler
 [ ] event tracker
 
