@@ -200,6 +200,9 @@ module Dm
     #
     def reply (workitem)
 
+      workitem = workitem.to_ruote_workitem \
+        if workitem.respond_to?(:to_ruote_workitem)
+
       destroy(workitem.fei)
       reply_to_engine(workitem)
     end

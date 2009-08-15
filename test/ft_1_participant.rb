@@ -15,7 +15,7 @@ class FtParticipantTest < Test::Unit::TestCase
 
   def setup
     @engine = Ruote::Engine.new()
-    @engine.register_participant :alice, Ruote::Dm::DmParticipant
+    @alice = @engine.register_participant :alice, Ruote::Dm::DmParticipant
   end
   def teardown
     @engine.shutdown
@@ -31,13 +31,24 @@ class FtParticipantTest < Test::Unit::TestCase
       alice
     end
 
-    wfid = @engine.launch(pdef)
+    wfid = @engine.launch(pdef, :fields => { 'toto' => 'nada' })
 
     sleep 0.400
 
     assert_equal 1, Ruote::Dm::DmWorkitem.all.size
-    assert_match /^.+|.+|.+$/, Ruote::Dm::DmWorkitem.first.fei
     assert_equal 0, @engine.process(wfid).errors.size
+
+    dwi = Ruote::Dm::DmWorkitem.first
+
+    assert_match /^.+|.+|.+$/, dwi.fei
+    assert_equal '|params:|ref:alice|participant:alice|toto:nada|', dwi.keywords
+
+    @alice.reply(dwi)
+
+    sleep 0.400
+
+    assert_equal 0, Ruote::Dm::DmWorkitem.all.size
+    assert_nil @engine.process(wfid)
   end
 end
 
