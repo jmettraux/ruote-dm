@@ -54,19 +54,19 @@ class StorageTest < Test::Unit::TestCase
     fexp = new_expression('0_0', :wfid => 'abcd-5_0')
     @storage[fexp.fei] = fexp
 
-    fexp = new_expression('0_1', :class => Ruote::WaitExpression)
+    fexp = new_expression('0_1', :class => Ruote::Exp::WaitExpression)
     @storage[fexp.fei] = fexp
 
     assert_equal 2, @storage.find_expressions(:wfid => '1245-6789').size
     assert_equal 2, @storage.find_expressions(:wfid => 'abcd-5').size
 
     assert_equal(
-      Ruote::SequenceExpression,
+      Ruote::Exp::SequenceExpression,
       @storage.find_expressions(:wfid => 'abcd-5').first.class)
 
     assert_equal(
       3,
-      @storage.find_expressions(:class => Ruote::SequenceExpression).size)
+      @storage.find_expressions(:class => Ruote::Exp::SequenceExpression).size)
 
     assert_equal(
       1,
@@ -78,7 +78,7 @@ class StorageTest < Test::Unit::TestCase
   def new_expression (expid, opts={})
 
     opts[:wfid] ||= '1245-6789'
-    opts[:class] ||= Ruote::SequenceExpression
+    opts[:class] ||= Ruote::Exp::SequenceExpression
 
     fei = Ruote::FlowExpressionId.from_h(
       'engine_id' => 'toto', 'wfid' => opts[:wfid], 'expid' => expid)
