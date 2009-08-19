@@ -1,13 +1,21 @@
 
 = ruote-dm CREDITS.txt
 
+
 == authors
 
 - John Mettraux  http://jmettraux.wordpress.com
 
+
 == contributors
 
+
 == feedback
+
+- asm
+- jpr5
+- Kenneth Kalmer (http://www.opensourcery.co.za/)
+
 
 == many thanks to
 

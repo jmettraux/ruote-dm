@@ -197,6 +197,25 @@ module Dm
   # That adds a bit more of info to the key_field value, even if there's only
   # one workitem field involved.
   #
+  #
+  # == :dm_workitem_class
+  #
+  # Perhaps not the best option to change !
+  #
+  # By default, DmParticipant uses Ruote::Dm::DmWorkitem
+  # (a DataMapper::Resource extending class) to store workitems.
+  #
+  # Provided this other class as a class method .from_ruote_workitem(wi), and
+  # replies to #all, #first and .autoupgrade! as a DataMapper::Resource does,
+  # it's OK to set another class.
+  #
+  #   fred = engine.register_participant(
+  #     'fred',
+  #     Ruote::Dm::DmParticipant,
+  #     :dm_workitem_class => MyRuote::DmWorkitem)
+  #
+  # Use at your own risk !
+  #
   class DmParticipant
 
     include EngineContext
@@ -210,9 +229,10 @@ module Dm
       @store_name = opts[:store_name]
       @dm_repository = opts[:dm_repository] || :default
       @key_field = opts[:key_field]
+      @dm_workitem_class = opts[:dm_workitem_class] || Ruote::Dm::DmWorkitem
 
       DataMapper.repository(@dm_repository) do
-        DmWorkitem.auto_upgrade!
+        @dm_workitem_class.auto_upgrade!
       end
     end
 
@@ -232,7 +252,7 @@ module Dm
 
         kf = kf ? kf.to_s : nil
 
-        DmWorkitem.from_ruote_workitem(
+        @dm_workitem_class.from_ruote_workitem(
           workitem, :store_name => @store_name, :key_field => kf)
       end
     end
@@ -271,7 +291,7 @@ module Dm
     def find (fei)
 
       DataMapper.repository(@dm_repository) do
-        DmWorkitem.first(:fei => fei.to_s)
+        @dm_workitem_class.first(:fei => fei.to_s)
       end
     end
 
@@ -287,7 +307,7 @@ module Dm
       DataMapper.repository(@dm_repository) do
         opts = {}
         opts[:store_name] = @store_name if @store_name
-        DmWorkitem.all(opts)
+        @dm_workitem_class.all(opts)
       end
     end
   end
