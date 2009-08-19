@@ -46,6 +46,7 @@ module Dm
 
     property :wi_fields, Yaml, :nullable => false
     property :keywords, Text, :nullable => false
+    property :key_field, String, :index => :key_field, :nullable => true
 
     property :dispatch_time, DateTime, :nullable => false
     property :last_modified, DateTime, :nullable => false
@@ -76,7 +77,10 @@ module Dm
       wi
     end
 
-    def self.from_ruote_workitem (workitem, store_name=nil)
+    def self.from_ruote_workitem (workitem, opts={})
+
+      store_name = opts[:store_name]
+      key_field = opts[:key_field]
 
       wi = DmWorkitem.first(:fei => fei.to_s) || DmWorkitem.new
 
@@ -93,6 +97,7 @@ module Dm
         # done by DmWorkitem#save
 
       wi.store_name = store_name
+      wi.key_field = workitem.fields[key_field]
 
       wi.save
     end
@@ -122,6 +127,14 @@ module Dm
 
       self.last_modified = Time.now
       self.keywords = determine_keywords(participant_name, wi_fields)
+
+      #return unless @key_field
+      #kf = if @key_field.match(/\$\{[^\}]\}/)
+      #  'TODO : implement me'
+      #else
+      #  wi_fields[kf]
+      #end
+      #self.key_field = kf
     end
 
     def determine_keywords (pname, fields)
@@ -173,6 +186,7 @@ module Dm
 
       @store_name = opts[:store_name]
       @dm_repository = opts[:dm_repository] || :default
+      @key_field = opts[:key_field]
 
       DataMapper.repository(@dm_repository) do
         DmWorkitem.auto_upgrade!
@@ -184,7 +198,9 @@ module Dm
     def consume (workitem)
 
       DataMapper.repository(@dm_repository) do
-        DmWorkitem.from_ruote_workitem(workitem, @store_name)
+
+        DmWorkitem.from_ruote_workitem(
+          workitem, :store_name => @store_name, :key_field => @key_field)
       end
     end
 

@@ -6,3 +6,6 @@
 [ ] scheduler
 [ ] event tracker
 
+[o] add 'key_field' string column to DmWorkitem
+[ ] add ability to swap DmWorkitem when initializing DmParticipant
+

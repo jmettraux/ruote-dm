@@ -88,16 +88,43 @@ class ParticipantTest < Test::Unit::TestCase
   def test_search_with_store_names
 
     Ruote::Dm::DmWorkitem.from_ruote_workitem(
-      new_wi('123', '0_0', 'alice', { 'a' => 'A' }), 'store0')
+      new_wi('123', '0_0', 'alice', { 'a' => 'A' }), :store_name => 'store0')
     Ruote::Dm::DmWorkitem.from_ruote_workitem(
-      new_wi('124', '0_0', 'alice', { 'a' => 'A' }), 'store1')
+      new_wi('124', '0_0', 'alice', { 'a' => 'A' }), :store_name => 'store1')
     Ruote::Dm::DmWorkitem.from_ruote_workitem(
-      new_wi('125', '0_0', 'bob', { 'a' => 'A' }), 'store0')
+      new_wi('125', '0_0', 'bob', { 'a' => 'A' }), :store_name => 'store0')
 
     assert_equal 3, Ruote::Dm::DmWorkitem.search('a:A').size
     assert_equal 1, Ruote::Dm::DmWorkitem.search('a:A', 'store1').size
     assert_equal 1, Ruote::Dm::DmWorkitem.search('a:A', %w[ store1 ]).size
     assert_equal 2, Ruote::Dm::DmWorkitem.search('a:A', %w[ store0 ]).size
+  end
+
+  def test_no_key_field
+
+    @participant.consume(new_wi('123', '0_0', 'alice', {
+      'animals' => %w[ lion boar beef zebra gnu ], 'cars' => { 'bmw' => true }
+    }))
+
+    dwi = Ruote::Dm::DmWorkitem.first
+
+    assert_nil dwi.key_field
+  end
+
+  def test_key_field
+
+    @participant = Ruote::Dm::DmParticipant.new(
+      :key_field => 'brand')
+    @participant.context = {}
+
+    %w[ alfa-romeo citroen maserati citroen ].each_with_index do |b, i|
+      @participant.consume(new_wi('123', "0_#{i}", 'alice', {
+        'animals' => %w[ lion boar beef zebra gnu ], 'brand' => b
+      }))
+    end
+
+    assert_equal 1, Ruote::Dm::DmWorkitem.all(:key_field => 'alfa-romeo').size
+    assert_equal 2, Ruote::Dm::DmWorkitem.all(:key_field => 'citroen').size
   end
 
   protected
