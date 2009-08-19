@@ -66,14 +66,6 @@ module Dm
       wi.fields = wi_fields
       wi.participant_name = participant_name
 
-      class << wi
-        attr_reader :dispatch_time, :last_modified
-      end
-      wi.instance_variable_set(:@dispatch_time, dispatch_time)
-      wi.instance_variable_set(:@last_modified, last_modified)
-        #
-        # not sure about that...
-
       wi
     end
 
@@ -97,13 +89,12 @@ module Dm
         # done by DmWorkitem#save
 
       wi.store_name = store_name
-      wi.key_field = workitem.fields[key_field]
+      wi.key_field = key_field
 
       wi.save
     end
 
     def self.search (query, store_names=nil)
-    #def self.search (query, store_names)
 
       opts = {}
       opts[:keywords.like] = "%#{query}%"
@@ -127,14 +118,6 @@ module Dm
 
       self.last_modified = Time.now
       self.keywords = determine_keywords(participant_name, wi_fields)
-
-      #return unless @key_field
-      #kf = if @key_field.match(/\$\{[^\}]\}/)
-      #  'TODO : implement me'
-      #else
-      #  wi_fields[kf]
-      #end
-      #self.key_field = kf
     end
 
     def determine_keywords (pname, fields)
@@ -174,6 +157,46 @@ module Dm
   #
   #     alice = engine.register_participant('bob', Ruote::Dm::DmParticipant)
   #
+  # == :key_field
+  #
+  # The DmParticipant understands a :key_field option when
+  # initialized/registered.
+  #
+  #   alice = engine.register_participant(
+  #     :alice, Ruote::Dm::DmParticipant, :key_field => 'brand')
+  #
+  # This alice participant will place the value in the workitem field named
+  # 'brand' in the key_field column of the Ruote::Dm::DmWorkitem.
+  #
+  # This key_field column is indexed and should thus be efficiently queried.
+  #
+  # Note that :key_field can leverage composite values.
+  #
+  #   bob = engine.register_participant(
+  #     :bob, Ruote::Dm::DmParticipant, :key_field => '${brand} ${year}')
+  #
+  # For bob, the key_field column will hold a concatenation of the workitem
+  # field 'brand', a space and the workitem field 'year'.
+  #
+  # This technique may also be used to look deeper into workitems :
+  #
+  #   charly = engine.register_participant(
+  #     :charly, Ruote::Dm::DmParticipant, :key_field => '${car.brand}')
+  #
+  # For a workitem whose payload look like
+  #
+  #   { 'car' => { 'brand' => 'toyota', :type => 'prius' }, 'dossier' => 3423 }
+  #
+  # You can also use that trick to do things like
+  #
+  #   doug = engine.register_participant(
+  #     :doug, Ruote::Dm::DmParticipant, :key_field => 'brand::${brand}')
+  #   elsa = engine.register_participant(
+  #     :elsa, Ruote::Dm::DmParticipant, :key_field => 'rank::${rank}')
+  #
+  # That adds a bit more of info to the key_field value, even if there's only
+  # one workitem field involved.
+  #
   class DmParticipant
 
     include EngineContext
@@ -199,8 +222,18 @@ module Dm
 
       DataMapper.repository(@dm_repository) do
 
+        kf = if @key_field and expstorage and @key_field.match(/\$\{[^\}]+\}/)
+          Ruote.dosub(@key_field, expstorage[workitem.fei], workitem)
+        elsif @key_field
+          workitem.fields[@key_field]
+        else
+          nil
+        end
+
+        kf = kf ? kf.to_s : nil
+
         DmWorkitem.from_ruote_workitem(
-          workitem, :store_name => @store_name, :key_field => @key_field)
+          workitem, :store_name => @store_name, :key_field => kf)
       end
     end
 

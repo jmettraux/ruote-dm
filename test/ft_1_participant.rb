@@ -50,5 +50,27 @@ class FtParticipantTest < Test::Unit::TestCase
     assert_equal 0, Ruote::Dm::DmWorkitem.all.size
     assert_nil @engine.process(wfid)
   end
+
+  def test_composite_key_field
+
+    @bravo = @engine.register_participant(
+      :bravo, Ruote::Dm::DmParticipant, :key_field => '${f:brand} ${f:year}')
+
+    pdef = Ruote::process_definition :name => 'test' do
+      bravo
+    end
+
+    %w[ alfa-romeo citroen maserati citroen ford toyota ].each do |brand|
+      @engine.launch(pdef, :fields => { 'brand' => brand, 'year' => 1970 })
+    end
+
+    sleep 0.400
+
+    #p Ruote::Dm::DmWorkitem.all.collect { |dwi| dwi.key_field }
+
+    assert_equal 6, Ruote::Dm::DmWorkitem.all.size
+    assert_equal 1, Ruote::Dm::DmWorkitem.all(:key_field => 'ford 1970').size
+    assert_equal 2, Ruote::Dm::DmWorkitem.all(:key_field => 'citroen 1970').size
+  end
 end
 

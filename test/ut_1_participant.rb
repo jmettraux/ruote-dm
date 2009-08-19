@@ -123,6 +123,8 @@ class ParticipantTest < Test::Unit::TestCase
       }))
     end
 
+    #p Ruote::Dm::DmWorkitem.all.collect { |dwi| dwi.key_field }
+
     assert_equal 1, Ruote::Dm::DmWorkitem.all(:key_field => 'alfa-romeo').size
     assert_equal 2, Ruote::Dm::DmWorkitem.all(:key_field => 'citroen').size
   end
