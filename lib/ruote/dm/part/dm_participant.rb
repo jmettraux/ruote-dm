@@ -216,6 +216,20 @@ module Dm
   #
   # Use at your own risk !
   #
+  #
+  # == Ruote::Dm::DmWorkitem.auto_upgrade!
+  #
+  # You might want to run
+  #
+  #   Ruote::Dm::DmWorkitem.auto_upgrade!
+  #
+  # before registering any DmParticipant in the engine, in order to prepare
+  # the database table.
+  #
+  #   DataMapper.repository(:my_repository) do
+  #     Ruote::Dm::DmWorkitem.auto_upgrade!
+  #   end
+  #
   class DmParticipant
 
     include EngineContext
@@ -231,9 +245,11 @@ module Dm
       @key_field = opts[:key_field]
       @dm_workitem_class = opts[:dm_workitem_class] || Ruote::Dm::DmWorkitem
 
-      DataMapper.repository(@dm_repository) do
-        @dm_workitem_class.auto_upgrade!
-      end
+      #DataMapper.repository(@dm_repository) do
+      #  @dm_workitem_class.auto_upgrade!
+      #end
+        #
+        # not Ruote::Dm::DmParticipant responsibility anymore
     end
 
     # Method called by the workflow engine directly.
