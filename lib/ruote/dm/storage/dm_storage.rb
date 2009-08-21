@@ -75,6 +75,15 @@ module Dm
   #
   # DataMapper persistence for Ruote expressions.
   #
+  # == Ruote::Dm::DmExpression.auto_upgrade!
+  #
+  # You might want to run
+  #
+  #   Ruote::Dm::DmExpression.auto_upgrade!
+  #
+  # before your first run for Ruote::Dm::DmStorage (usually
+  # Ruote::Dm::DmPersistedEngine)
+  #
   class DmStorage
 
     include EngineContext
@@ -87,10 +96,10 @@ module Dm
 
       @dm_repository = c[:expstorage_dm_repository] || :default
 
-      DataMapper.repository(@dm_repository) do
-        DmExpression.auto_upgrade!
-      end
-        # this is costly
+      #DataMapper.repository(@dm_repository) do
+      #  DmExpression.auto_upgrade!
+      #end
+        # this is costly, and it's now left to the integrator
 
       subscribe(:expressions)
     end

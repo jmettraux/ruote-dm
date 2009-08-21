@@ -15,9 +15,6 @@ require 'ruote/dm/part/dm_participant'
 class ParticipantTest < Test::Unit::TestCase
 
   def setup
-    DataMapper.repository(:default) do
-      Ruote::Dm::DmWorkitem.auto_upgrade!
-    end
     @participant = Ruote::Dm::DmParticipant.new({})
     @participant.context = {}
     #DataObjects::Mysql.logger = DataObjects::Logger.new(STDOUT, :debug)

@@ -14,9 +14,6 @@ require 'ruote/dm/part/dm_participant'
 class FtParticipantTest < Test::Unit::TestCase
 
   def setup
-    DataMapper.repository(:default) do
-      Ruote::Dm::DmWorkitem.auto_upgrade!
-    end
     @engine = Ruote::Engine.new()
     @alice = @engine.register_participant :alice, Ruote::Dm::DmParticipant
   end
