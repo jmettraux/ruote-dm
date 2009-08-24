@@ -36,6 +36,16 @@ class ParticipantTest < Test::Unit::TestCase
     assert_not_nil Ruote::Dm::DmWorkitem.first.last_modified
   end
 
+  def test_consume_non_string_field_keys
+
+    wi = new_wi('12345-678', '0_0', 'toto', { :a => 'A' })
+
+    @participant.consume(wi)
+
+    assert_equal 1, Ruote::Dm::DmWorkitem.all.size
+    assert_not_nil Ruote::Dm::DmWorkitem.first.last_modified
+  end
+
   def test_cancel
 
     wi = new_wi('12345-678', '0_0', 'alice', { 'a' => 'A' })

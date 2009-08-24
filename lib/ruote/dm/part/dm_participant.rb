@@ -129,7 +129,8 @@ module Dm
 
       case o
       when Hash
-        "|#{o.keys.sort.collect { |k| "#{dk(k)}:#{dk(o[k])}" }.join('|')}|"
+        keys = o.keys.collect { |k| k.to_s }.sort
+        "|#{keys.collect { |k| "#{dk(k)}:#{dk(o[k])}" }.join('|')}|"
       when Array
         "|#{o.collect { |e| dk(e) }.join('|')}|"
       else
