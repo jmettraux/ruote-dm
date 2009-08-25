@@ -110,6 +110,19 @@ class ParticipantTest < Test::Unit::TestCase
     assert_equal 2, Ruote::Dm::DmWorkitem.search('a:A', %w[ store0 ]).size
   end
 
+  def test_workitem_override
+
+    Ruote::Dm::DmWorkitem.from_ruote_workitem(
+      new_wi('123', '0_0', 'alice', { 'a' => 'A' }), :store_name => 'store0')
+
+    assert_equal 1, Ruote::Dm::DmWorkitem.all.size
+
+    Ruote::Dm::DmWorkitem.from_ruote_workitem(
+      new_wi('123', '0_0', 'alice', { 'a' => 'A' }), :store_name => 'store0')
+
+    assert_equal 1, Ruote::Dm::DmWorkitem.all.size
+  end
+
   def test_no_key_field
 
     @participant.consume(new_wi('123', '0_0', 'alice', {

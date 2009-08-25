@@ -74,7 +74,7 @@ module Dm
       store_name = opts[:store_name]
       key_field = opts[:key_field]
 
-      wi = DmWorkitem.first(:fei => fei.to_s) || DmWorkitem.new
+      wi = DmWorkitem.first(:fei => workitem.fei.to_s) || DmWorkitem.new
 
       wi.fei = workitem.fei.to_s
       wi.wfid = workitem.fei.parent_wfid
