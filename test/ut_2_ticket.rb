@@ -23,7 +23,10 @@ class ExclusiveTest < Test::Unit::TestCase
 
     ticket = Ruote::Dm::Ticket.draw('ticketer', 'target')
 
+    #p ticket
+
     assert_not_nil ticket
+    assert_not_nil ticket.created_at
     assert_equal true, ticket.consumable?
   end
 

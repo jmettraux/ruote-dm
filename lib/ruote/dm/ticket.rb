@@ -31,6 +31,7 @@ module Dm
     property :id, Integer, :serial => true
     property :holder, String, :key => :true, :nullable => false
     property :target, String, :key => :true, :nullable => false
+    property :created_at, DateTime, :nullable => false
 
     def consumable?
 
@@ -42,7 +43,9 @@ module Dm
 
     def self.draw (holder, target)
 
-      ticket = Ticket.new(:target => target, :holder => holder)
+      ticket = Ticket.new(
+        :target => target, :holder => holder, :created_at => Time.now)
+
       ticket.save ? ticket : nil
     end
   end
