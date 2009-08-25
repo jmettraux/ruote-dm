@@ -25,24 +25,26 @@
 module Ruote
 module Dm
 
-  class Lock
+  class Ticket
     include DataMapper::Resource
 
-    property :id, Serial
-    property :locker, String, :index => :ll_pair
-    property :locked, String, :index => :ll_pair
+    property :id, Integer, :serial => true
+    property :holder, String, :key => :true, :nullable => false
+    property :target, String, :key => :true, :nullable => false
 
-    def locked?
+    def consumable?
 
-      first_lock = Lock.first(:locked => locked, :order => [ :id.asc ])
-      (first_lock.id == self.id)
+      first_ticket = Ticket.first(:target => target, :order => [ :id.asc ])
+      (first_ticket.id == self.id)
     end
-  end
 
-  def self.lock (locker, locked)
+    alias :consume :destroy
 
-    lock = Lock.new(:locked => locked, :locker => locker)
-    lock.save ? lock : nil
+    def self.draw (holder, target)
+
+      ticket = Ticket.new(:target => target, :holder => holder)
+      ticket.save ? ticket : nil
+    end
   end
 end
 end
