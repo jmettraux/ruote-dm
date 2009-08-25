@@ -13,6 +13,7 @@ require 'ruote/dm/exclusive'
 class ExclusiveTest < Test::Unit::TestCase
 
   def setup
+    Ruote::Dm::Lock.all.destroy!
   end
   def teardown
     Ruote::Dm::Lock.all.destroy!
@@ -37,6 +38,46 @@ class ExclusiveTest < Test::Unit::TestCase
     l0.destroy
 
     assert_equal true, l1.locked?
+  end
+
+  def test_wait
+
+    time_line = []
+
+    job = lambda do |locker, sec|
+
+      lock = Ruote::Dm.lock(locker, 'locked')
+
+      loop do
+        time_line << [ locker, :acquired, lock.id ]
+
+        sleep(sec)
+        time_line << [ locker, :woke_up ]
+
+        time_line << [ locker, :locked?, lock.locked? ]
+
+        if lock.locked?
+          time_line << [ locker, :job_done ]
+          lock.destroy
+          break
+        end
+
+        time_line << [ locker, :passing ]
+        sleep 0.100
+      end
+    end
+
+    t0 = Thread.new { job.call('a', 0.1) }
+    t1 = Thread.new { job.call('b', 0.05) }
+
+    sleep 1
+
+    assert_equal 0, Ruote::Dm::Lock.all.size
+
+    #time_line.each { |e| p e }
+
+    assert_equal 1, time_line.select { |e| e == [ 'a', :job_done ] }.size
+    assert_equal 1, time_line.select { |e| e == [ 'b', :job_done ] }.size
   end
 end
 
