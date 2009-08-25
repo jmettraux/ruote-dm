@@ -7,7 +7,7 @@
 
 require File.join(File.dirname(__FILE__), 'test_helper.rb')
 
-require 'ruote/dm/exclusive'
+#require 'ruote/dm/lock'
 
 
 class ExclusiveTest < Test::Unit::TestCase

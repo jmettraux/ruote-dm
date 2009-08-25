@@ -6,7 +6,7 @@ DataMapper.setup(:default, 'mysql://localhost/test')
 
 require 'ruote/dm/storage/dm_storage'
 require 'ruote/dm/part/dm_participant'
-require 'ruote/dm/exclusive'
+require 'ruote/dm/lock'
 
 DataMapper.repository(:default) do
   Ruote::Dm::DmExpression.auto_upgrade!
