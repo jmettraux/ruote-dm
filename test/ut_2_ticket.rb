@@ -43,6 +43,23 @@ class ExclusiveTest < Test::Unit::TestCase
     assert_equal true, l1.consumable?
   end
 
+  def test_discard
+
+    Ruote::Dm::Ticket.draw('a', 't0')
+    Ruote::Dm::Ticket.draw('b', 't0')
+    Ruote::Dm::Ticket.draw('b', 't1')
+
+    assert_equal 3, Ruote::Dm::Ticket.all.size
+
+    Ruote::Dm::Ticket.discard('t1')
+
+    assert_equal 2, Ruote::Dm::Ticket.all.size
+
+    Ruote::Dm::Ticket.discard('t0')
+
+    assert_equal 0, Ruote::Dm::Ticket.all.size
+  end
+
   def test_same_same
 
     Ruote::Dm::Ticket.draw('ticketer1', 'target')

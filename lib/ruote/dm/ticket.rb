@@ -48,6 +48,11 @@ module Dm
 
       ticket.save ? ticket : nil
     end
+
+    def self.discard (target)
+
+      Ticket.all(:target => target).destroy!
+    end
   end
 end
 end
