@@ -79,8 +79,7 @@ module Dm
       wi.engine_id = workitem.fei.engine_id
       wi.participant_name = workitem.participant_name
 
-      #wi.wi_fields = Ruote::Json.encode(workitem.fields)
-      wi.wi_fields = workitem.fields.to_json
+      wi.wi_fields = Ruote::Json.encode(workitem.fields)
 
       wi.dispatch_time ||= Time.now
       wi.last_modified = Time.now
