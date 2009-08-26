@@ -152,6 +152,21 @@ class ParticipantTest < Test::Unit::TestCase
     assert_equal 2, Ruote::Dm::DmWorkitem.all(:key_field => 'citroen').size
   end
 
+  def test_to_ruote_workitem
+
+    Ruote::Dm::DmWorkitem.from_ruote_workitem(
+      new_wi('123', '0_0', 'alice', { 'a' => 'A' }), :store_name => 'store0')
+
+    dwi = Ruote::Dm::DmWorkitem.first
+
+    assert_equal "{\"a\":\"A\"}", dwi.wi_fields
+
+    wi = dwi.to_ruote_workitem
+
+    assert_equal(Ruote::Workitem, wi.class)
+    assert_equal({ 'a' => 'A' }, wi.fields)
+  end
+
   protected
 
   def new_wi (wfid, expid, participant_name, fields)

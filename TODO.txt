@@ -12,3 +12,7 @@
 [ ] part : control #save result
 [ ] storage : control #save result
 
+[o] dmParticipant : switched to JSON for fields
+[ ] dmParticipant : used Ruote::Json.encode(o)
+[ ] use type Object ? / JSON / text
+
