@@ -22,9 +22,7 @@
 # Made in Japan.
 #++
 
-require 'base64'
 require 'dm-core'
-#require 'dm-aggregates'
 
 require 'ruote/engine/context'
 require 'ruote/queue/subscriber'
@@ -43,11 +41,11 @@ module Dm
     property :fei, String, :key => true
     property :wfid, String, :index => :wfid
     property :expclass, String, :index => :expclass
-    property :svalue, Text, :lazy => false
+    property :svalue, Object, :lazy => false
 
     def as_ruote_expression (context)
 
-      fe = Marshal.load(Base64.decode64(self.svalue))
+      fe = svalue
       fe.context = context
       fe
     end
@@ -59,7 +57,7 @@ module Dm
       e.fei = fexp.fei.to_s
       e.wfid = fexp.fei.parent_wfid
       e.expclass = fexp.class.name
-      e.svalue = Base64.encode64(Marshal.dump(fexp))
+      e.svalue = fexp
 
       e.save
     end
