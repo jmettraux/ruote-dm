@@ -28,15 +28,19 @@ module Dm
   class Ticket
     include DataMapper::Resource
 
-    property :id, Integer, :serial => true
-    property :holder, String, :key => :true, :nullable => false
-    property :target, String, :key => :true, :nullable => false
+    property :sequence, Integer, :serial => true
+    property :holder, String, :unique_index => :true, :nullable => false
+    property :target, String, :unique_index => :true, :nullable => false
     property :created_at, DateTime, :nullable => false
 
     def consumable?
 
-      first_ticket = Ticket.first(:target => target, :order => [ :id.asc ])
-      (first_ticket.id == self.id)
+      first_ticket = Ticket.first(
+        :target => target, :order => [ :sequence.asc ])
+
+      # and when there is no ticket ?
+
+      (first_ticket.sequence == self.sequence)
     end
 
     alias :consume :destroy
@@ -49,7 +53,7 @@ module Dm
       ticket.save ? ticket : nil
     end
 
-    def self.discard (target)
+    def self.discard_all (target)
 
       Ticket.all(:target => target).destroy!
     end

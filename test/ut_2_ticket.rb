@@ -51,11 +51,11 @@ class ExclusiveTest < Test::Unit::TestCase
 
     assert_equal 3, Ruote::Dm::Ticket.all.size
 
-    Ruote::Dm::Ticket.discard('t1')
+    Ruote::Dm::Ticket.discard_all('t1')
 
     assert_equal 2, Ruote::Dm::Ticket.all.size
 
-    Ruote::Dm::Ticket.discard('t0')
+    Ruote::Dm::Ticket.discard_all('t0')
 
     assert_equal 0, Ruote::Dm::Ticket.all.size
   end
@@ -63,7 +63,7 @@ class ExclusiveTest < Test::Unit::TestCase
   def test_same_same
 
     Ruote::Dm::Ticket.draw('ticketer1', 'target')
-    Ruote::Dm::Ticket.draw('ticketer1', 'target')
+    Ruote::Dm::Ticket.draw('ticketer1', 'target') rescue nil
 
     assert_equal 1, Ruote::Dm::Ticket.all.size
   end
@@ -78,7 +78,7 @@ class ExclusiveTest < Test::Unit::TestCase
         ticket = Ruote::Dm::Ticket.draw(holder, 'target')
 
         loop do
-          time_line << [ holder, :drawn, ticket.id ]
+          time_line << [ holder, :drawn, ticket.sequence ]
 
           sleep(sec)
           time_line << [ holder, :woke_up ]
