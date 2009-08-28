@@ -24,10 +24,10 @@
 
 require 'base64'
 require 'dm-core'
-require 'dm-types'
 
 require 'ruote/engine/context'
 require 'ruote/part/local_participant'
+require 'ruote/util/json'
 
 
 module Ruote
@@ -44,7 +44,7 @@ module Dm
     property :engine_id, String, :index => :engine_id, :nullable => false
     property :participant_name, String, :index => :participant_name, :nullable => false
 
-    property :wi_fields, Yaml, :nullable => false
+    property :wi_fields, Text, :nullable => false
     property :keywords, Text, :nullable => false
     property :key_field, String, :index => :key_field, :nullable => true
 
@@ -52,8 +52,6 @@ module Dm
     property :last_modified, DateTime, :nullable => false
 
     property :store_name, String, :index => :store_name
-
-    before :save, :pre_save
 
     # Turns this Ruote::Dm::DmWorkitem instance into a Ruote::Workitem
     # instance.
@@ -63,7 +61,7 @@ module Dm
       wi = Ruote::Workitem.new
 
       wi.fei = Ruote::FlowExpressionId.from_s(fei)
-      wi.fields = wi_fields
+      wi.fields = Ruote::Json.decode(wi_fields)
       wi.participant_name = participant_name
 
       wi
@@ -74,19 +72,20 @@ module Dm
       store_name = opts[:store_name]
       key_field = opts[:key_field]
 
-      wi = DmWorkitem.first(:fei => fei.to_s) || DmWorkitem.new
+      wi = DmWorkitem.first(:fei => workitem.fei.to_s) || DmWorkitem.new
 
       wi.fei = workitem.fei.to_s
       wi.wfid = workitem.fei.parent_wfid
       wi.engine_id = workitem.fei.engine_id
       wi.participant_name = workitem.participant_name
-      wi.wi_fields = workitem.fields
+
+      wi.wi_fields = Ruote::Json.encode(workitem.fields)
 
       wi.dispatch_time ||= Time.now
+      wi.last_modified = Time.now
 
-      #wi.keywords = ...
-      #wi.last_modified = Time.now
-        # done by DmWorkitem#save
+      wi.keywords = determine_keywords(
+        workitem.participant_name, workitem.fields)
 
       wi.store_name = store_name
       wi.key_field = key_field
@@ -112,20 +111,12 @@ module Dm
 
     protected
 
-    # Steps done before the actual #save
-    #
-    def pre_save
-
-      self.last_modified = Time.now
-      self.keywords = determine_keywords(participant_name, wi_fields)
-    end
-
-    def determine_keywords (pname, fields)
+    def self.determine_keywords (pname, fields)
 
       dk(fields.merge('participant' => pname)).gsub(/\|+/, '|')
     end
 
-    def dk (o)
+    def self.dk (o)
 
       case o
       when Hash
