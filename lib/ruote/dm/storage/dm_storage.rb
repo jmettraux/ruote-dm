@@ -173,6 +173,20 @@ module Dm
       end
     end
 
+    #--
+    # ticket methods
+    #++
+
+    def draw_ticket (fexp)
+
+      Ruote::Dm::Ticket.draw(self.object_id.to_s, fexp.fei.to_s)
+    end
+
+    def discard_all_tickets (fei)
+
+      Ruote::Dm::Ticket.discard_all(fei.to_s)
+    end
+
     protected
 
     def find (fei)
