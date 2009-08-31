@@ -139,15 +139,15 @@ module Dm
   # from other workitems stored by other participants in the same DataMapper
   # repository.
   #
-  #     alice = engine.register_participant(
-  #       'alice',
-  #       Ruote::Dm::DmParticipant.new(
-  #         :store_name => 'engineers',
-  #         :dm_repository => 'whateversql'))
+  #   alice = engine.register_participant(
+  #     'alice',
+  #     Ruote::Dm::DmParticipant.new(
+  #       :store_name => 'engineers',
+  #       :dm_repository => 'whateversql'))
   #
   # or simply
   #
-  #     alice = engine.register_participant('bob', Ruote::Dm::DmParticipant)
+  #   alice = engine.register_participant('bob', Ruote::Dm::DmParticipant)
   #
   # == :key_field
   #
