@@ -28,6 +28,7 @@ require 'dm-core'
 require 'ruote/engine/context'
 require 'ruote/part/local_participant'
 require 'ruote/util/json'
+require 'ruote/dm/error'
 
 
 module Ruote
@@ -90,7 +91,7 @@ module Dm
       wi.store_name = store_name
       wi.key_field = key_field
 
-      wi.save
+      wi.save || raise(Ruote::Dm::Error.new('failed to save', wi))
     end
 
     def self.search (query, store_names=nil)

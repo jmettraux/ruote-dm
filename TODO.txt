@@ -15,7 +15,6 @@
 
 [ ] DmHistory
 
-SAVE!!!!!!!!!!!!!!!!
-[ ] part : control #save result
-[ ] storage : control #save result
+[o] part : control #save result
+[o] storage : control #save result
 

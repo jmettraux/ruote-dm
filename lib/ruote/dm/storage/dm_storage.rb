@@ -27,6 +27,7 @@ require 'dm-core'
 require 'ruote/engine/context'
 require 'ruote/queue/subscriber'
 require 'ruote/storage/base'
+require 'ruote/dm/error'
 
 
 module Ruote
@@ -47,6 +48,7 @@ module Dm
 
       fe = svalue
       fe.context = context
+
       fe
     end
 
@@ -59,7 +61,7 @@ module Dm
       e.expclass = fexp.class.name
       e.svalue = fexp
 
-      e.save
+      e.save || raise(Ruote::Dm::Error.new("failed to save expression", e))
     end
 
     # Sets the table name for expressions to 'dm_expressions'.
