@@ -45,8 +45,8 @@ module Dm
     property :engine_id, String, :index => :engine_id, :nullable => false
     property :participant_name, String, :index => :participant_name, :nullable => false
 
-    property :wi_fields, Text, :nullable => false
-    property :keywords, Text, :nullable => false
+    property :wi_fields, Text, :length => 2**32 - 1, :nullable => false
+    property :keywords, Text, :length => 2**32 - 1, :nullable => false
     property :key_field, String, :index => :key_field, :nullable => true
 
     property :dispatch_time, DateTime, :nullable => false
