@@ -73,7 +73,7 @@ module Dm
       store_name = opts[:store_name]
       key_field = opts[:key_field]
 
-      wi = DmWorkitem.first(:fei => workitem.fei.to_s) || DmWorkitem.new
+      wi = self.first(:fei => workitem.fei.to_s) || self.new
 
       wi.fei = workitem.fei.to_s
       wi.wfid = workitem.fei.parent_wfid
@@ -100,7 +100,7 @@ module Dm
       opts[:keywords.like] = "%#{query}%"
       opts[:store_name] = Array(store_names) if store_names
 
-      DmWorkitem.all(opts)
+      self.all(opts)
     end
 
     # Sets the table name for the workitems to 'dm_workitems'.

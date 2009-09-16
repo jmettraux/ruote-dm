@@ -9,9 +9,6 @@
 
 == contributors
 
-
-== feedback
-
 - asm (many bug reports)
 - jpr5 (many bug reports)
 - Kenneth Kalmer (http://www.opensourcery.co.za/)
