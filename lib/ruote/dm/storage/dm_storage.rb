@@ -42,7 +42,7 @@ module Dm
     property :fei, String, :key => true
     property :wfid, String, :index => :wfid
     property :expclass, String, :index => :expclass
-    property :svalue, Object, :lazy => false
+    property :svalue, Object, :length => 2**32 - 1, :lazy => false
 
     def as_ruote_expression (context)
 
