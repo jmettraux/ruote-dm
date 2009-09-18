@@ -28,7 +28,6 @@ require 'dm-core'
 require 'ruote/engine/context'
 require 'ruote/part/local_participant'
 require 'ruote/util/json'
-require 'ruote/dm/error'
 
 
 module Ruote
@@ -68,6 +67,12 @@ module Dm
       wi
     end
 
+    # Turns a Ruote workitem into a DataMapper database record.
+    #
+    # Returns false if there the workitem was already stored in the db
+    # with the same information.
+    # Returns true if the record had to be created or updated.
+    #
     def self.from_ruote_workitem (workitem, opts={})
 
       store_name = opts[:store_name]
@@ -91,7 +96,7 @@ module Dm
       wi.store_name = store_name
       wi.key_field = key_field
 
-      wi.save || raise(Ruote::Dm::Error.new('failed to save', wi))
+      wi.save
     end
 
     def self.search (query, store_names=nil)

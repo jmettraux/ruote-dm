@@ -3,6 +3,8 @@
 
 ruote 2.0 extension for DataMapper (dm) persistence
 
+It uses DataMapper 0.10.0.
+
 
 == usage
 

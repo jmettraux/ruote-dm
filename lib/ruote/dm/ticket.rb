@@ -28,7 +28,7 @@ module Dm
   class Ticket
     include DataMapper::Resource
 
-    property :sequence, Integer, :serial => true
+    property :sequence, Serial
     property :holder, String, :unique_index => :true, :nullable => false
     property :target, String, :unique_index => :true, :nullable => false
     property :created_at, DateTime, :nullable => false

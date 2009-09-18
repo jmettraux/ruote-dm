@@ -117,10 +117,20 @@ class ParticipantTest < Test::Unit::TestCase
 
     assert_equal 1, Ruote::Dm::DmWorkitem.all.size
 
-    Ruote::Dm::DmWorkitem.from_ruote_workitem(
+    b = Ruote::Dm::DmWorkitem.from_ruote_workitem(
       new_wi('123', '0_0', 'alice', { 'a' => 'A' }), :store_name => 'store0')
 
     assert_equal 1, Ruote::Dm::DmWorkitem.all.size
+    assert_equal false, b # did not "resave"
+  end
+
+  def test_workitem_too_fat
+
+    assert_raise DataObjects::ConnectionError do
+
+      Ruote::Dm::DmWorkitem.from_ruote_workitem(
+        new_wi('123', '0_0', 'alice', { 'a' => %w{ A } * 1000000 }))
+    end
   end
 
   def test_no_key_field

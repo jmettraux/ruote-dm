@@ -18,3 +18,5 @@
 [o] part : control #save result
 [o] storage : control #save result
 
+[ ] upgrade to dm 0.10.0
+

@@ -27,7 +27,6 @@ require 'dm-core'
 require 'ruote/engine/context'
 require 'ruote/queue/subscriber'
 require 'ruote/storage/base'
-require 'ruote/dm/error'
 
 
 module Ruote
@@ -52,6 +51,11 @@ module Dm
       fe
     end
 
+    # Saves the expression as a DataMapper record.
+    #
+    # Returns false if the exact same expression is already stored.
+    # Returns true if the record got created or updated (exp modified).
+    #
     def self.from_ruote_expression (fexp)
 
       e = DmExpression.first(:fei => fexp.fei.to_s) || DmExpression.new
@@ -61,7 +65,7 @@ module Dm
       e.expclass = fexp.class.name
       e.svalue = fexp
 
-      e.save || raise(Ruote::Dm::Error.new("failed to save expression", e))
+      e.save
     end
 
     # Sets the table name for expressions to 'dm_expressions'.
