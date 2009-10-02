@@ -27,6 +27,7 @@ require 'dm-core'
 require 'ruote/engine/context'
 require 'ruote/queue/subscriber'
 require 'ruote/storage/base'
+require 'ruote/dm/ticket'
 
 
 module Ruote
