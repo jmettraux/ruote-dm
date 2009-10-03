@@ -228,6 +228,17 @@ module Dm
   #     Ruote::Dm::DmWorkitem.auto_upgrade!
   #   end
   #
+  #
+  # == dm repository
+  #
+  # By default, this participant uses the :default DataMapper repository.
+  #
+  # As seen above, this can be changed by setting the :dm_repository option at
+  # participant registration time.
+  #
+  # Else, the participant looks for the :participant_dm_repository or the
+  # :dm_repository option in the engine context (engine initialization options).
+  #
   class DmParticipant
 
     include EngineContext
@@ -247,7 +258,14 @@ module Dm
       #  @dm_workitem_class.auto_upgrade!
       #end
         #
-        # not Ruote::Dm::DmParticipant responsibility anymore
+        # not Ruote::Dm::DmParticipant's responsibility anymore
+    end
+
+    def context= (c)
+
+      super
+      dmr = c[:participant_dm_repository] || c[:dm_repository] || :default
+      @dm_repository = dmr if @dm_repository == :default
     end
 
     # Method called by the workflow engine directly.
