@@ -99,7 +99,8 @@ module Dm
 
       @context = c
 
-      @dm_repository = c[:expstorage_dm_repository] || :default
+      @dm_repository =
+        c[:expstorage_dm_repository] || c[:dm_repository] || :default
 
       #DataMapper.repository(@dm_repository) do
       #  DmExpression.auto_upgrade!
