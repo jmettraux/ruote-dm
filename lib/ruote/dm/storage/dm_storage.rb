@@ -166,10 +166,14 @@ module Dm
       end
     end
 
-    def purge
+    # A dangerous method, deletes all the expressions and all the tickets.
+    # Mostly used for tearing down test sets.
+    #
+    def purge!
 
       DataMapper.repository(@dm_repository) do
         DmExpression.all.destroy!
+        Ticket.all.destroy!
       end
     end
 
