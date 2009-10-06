@@ -81,6 +81,17 @@ module Dm
       end
     end
 
+    # Clears this error journal completely. Mostly used by the testing
+    # framework.
+    #
+    def purge!
+
+      DataMapper.repository(@dm_repository) do
+
+        DmProcessError.all.destroy!
+      end
+    end
+
     protected
 
     def record (fei, eargs)
