@@ -23,6 +23,7 @@
 #++
 
 require 'dm-core'
+require 'dm-aggregates'
 
 require 'ruote/engine/context'
 require 'ruote/queue/subscriber'

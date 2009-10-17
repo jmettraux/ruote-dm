@@ -23,6 +23,7 @@ DataMapper extensions for ruote 2.0 (ruby workflow engine)
     'ruote',
     'do_mysql',
     'dm-core',
+    'dm-aggregates',
     'dm-types'
   ].each { |d|
     s.requirements << d
