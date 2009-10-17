@@ -114,6 +114,16 @@ module Dm
 
       conditions = {}
 
+      # TODO: Update to use DM.repository.adapter.query since there is
+      # guarantee dm-aggregates is around.
+      if m = query[:responding_to]
+        expclass_list = DmExpression.aggregate(:expclass).select do |expclass_name|
+            ::Object.const_get(expclass_name).instance_methods.include?(m.to_s) rescue nil
+        end
+        return [] if expclass_list.empty?
+        conditions[:expclass] = expclass_list
+      end
+
       if i = query[:wfid]
         conditions[:wfid] = i
       end
@@ -121,17 +131,12 @@ module Dm
         conditions[:expclass] = c.to_s
       end
 
-      fexps = DataMapper.repository(@dm_repository) {
+      DataMapper.repository(@dm_repository) {
         DmExpression.all(conditions)
       }.collect { |e|
         e.as_ruote_expression(@context)
       }
 
-      if m = query[:responding_to]
-        fexps = fexps.select { |fe| fe.respond_to?(m) }
-      end
-
-      fexps
     end
 
     def []= (fei, fexp)
@@ -162,6 +167,9 @@ module Dm
       DataMapper.repository(@dm_repository) do
         #DmExpression.count
           # dm-aggregates is in dm-core and dm-core is no ruby 1.9.1 friend
+
+          # jpr5: 10/16/09: Actually, dm-aggregates is in dm-more.
+          # This may have been rectified by now..
         DmExpression.all.size
       end
     end
