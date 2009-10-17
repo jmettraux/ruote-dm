@@ -114,12 +114,21 @@ module Dm
 
       conditions = {}
 
-      # TODO: Update to use DM.repository.adapter.query since there is
-      # guarantee dm-aggregates is around.
       if m = query[:responding_to]
-        expclass_list = DmExpression.aggregate(:expclass).select do |expclass_name|
-            ::Object.const_get(expclass_name).instance_methods.include?(m.to_s) rescue nil
+        # NOTE: Using dm-aggregates would be cleaner, but if it's not
+        # available then using this SQL directly will be equivalent.
+        # It should run on any of DM's adapters, and will work within
+        # any defined repositories or field naming conventions.
+        expclass_list = if DmExpression.respond_to?(:aggregate)
+          DmExpression.aggregate(:expclass)
+        else
+          table = DmExpression.storage_name(@dm_repository)
+          field = DmExpression.properties(@dm_repository)[:expclass].field
+          DmExpression.repository.adapter.query("select #{field} from #{table} group by #{field}")
+        end.select do |expclass_name|
+          ::Object.const_get(expclass_name).instance_methods.include?(m.to_s) rescue false
         end
+
         return [] if expclass_list.empty?
         conditions[:expclass] = expclass_list
       end
