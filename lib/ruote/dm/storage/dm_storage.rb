@@ -120,11 +120,11 @@ module Dm
         # It should run on any of DM's adapters, and will work within
         # any defined repositories or field naming conventions.
         expclass_list = if DmExpression.respond_to?(:aggregate)
-          DmExpression.aggregate(:expclass)
+          DmExpression.aggregate(:expclass, :repository => @dm_repository)
         else
           table = DmExpression.storage_name(@dm_repository)
           field = DmExpression.properties(@dm_repository)[:expclass].field
-          DmExpression.repository.adapter.query("select #{field} from #{table} group by #{field}")
+          DmExpression.repository(@dm_repository).adapter.query("SELECT #{field} FROM #{table} GROUP BY #{field}")
         end.select do |expclass_name|
           ::Object.const_get(expclass_name).instance_methods.include?(m.to_s) rescue false
         end
