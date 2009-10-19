@@ -116,18 +116,29 @@ module Dm
       conditions = {}
 
       if m = query[:responding_to]
-        # NOTE: Using dm-aggregates would be cleaner, but if it's not
-        # available then using this SQL directly will be equivalent.
-        # It should run on any of DM's adapters, and will work within
-        # any defined repositories or field naming conventions.
-        expclass_list = if DmExpression.respond_to?(:aggregate)
+
+        # NOTE: using dm-aggregates, but falling back to SQL if the adapter
+        # doesn't have an aggregate method (hello do_mysql)
+
+        adapter = DmExpression.repository(@dm_repository).adapter
+
+        expclass_list = if adapter.respond_to?(:aggregate)
+
           DmExpression.aggregate(:expclass, :repository => @dm_repository)
+
         else
+
           table = DmExpression.storage_name(@dm_repository)
           field = DmExpression.properties(@dm_repository)[:expclass].field
-          DmExpression.repository(@dm_repository).adapter.query("SELECT #{field} FROM #{table} GROUP BY #{field}")
+
+          DmExpression.repository(@dm_repository).adapter.query(
+            "SELECT #{field} FROM #{table} GROUP BY #{field}")
+
         end.select do |expclass_name|
-          ::Object.const_get(expclass_name).instance_methods.include?(m.to_s) rescue false
+
+          ms = Ruote.constantize(expclass_name).instance_methods
+
+          ms.include?(m.to_s) || ms.include?(m.to_sym)
         end
 
         return [] if expclass_list.empty?

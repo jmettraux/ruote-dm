@@ -5,12 +5,12 @@
 == authors
 
 - John Mettraux  http://jmettraux.wordpress.com
+- Jordan Ritter (http://github.com/jpr5)
 
 
 == contributors
 
 - asm (many bug reports)
-- jpr5 (many bug reports)
 - Kenneth Kalmer (http://www.opensourcery.co.za/)
 
 
