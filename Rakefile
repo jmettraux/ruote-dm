@@ -1,68 +1,78 @@
 
 require 'rubygems'
-
-require 'fileutils'
-
 require 'rake'
+
+require 'lib/ruote/dm/version.rb'
+
+#
+# CLEAN
+
 require 'rake/clean'
-require 'rake/packagetask'
-require 'rubygems/package_task'
-#require 'rake/testtask'
+CLEAN.include('pkg', 'tmp', 'html')
+task :default => [ :clean ]
 
 
-gemspec = File.read('ruote-dm.gemspec')
-eval "gemspec = #{gemspec}"
+#
+# GEM
 
+require 'jeweler'
 
-CLEAN.include('pkg', 'rdoc', 'work', 'logs')
+Jeweler::Tasks.new do |gem|
 
-task :default => [ :clean, :repackage ]
+  gem.version = Ruote::Dm::VERSION
+  gem.name = 'ruote-dm'
+  gem.summary = 'datamapper storage for ruote 2.1'
+  gem.description = %{
+datamapper storage for ruote 2.1
+  }.strip
+  gem.email = 'jmettraux@gmail.com'
+  gem.homepage = 'http://github.com/jmettraux/ruote-dm'
+  gem.authors = [ 'John Mettraux' ]
+  gem.rubyforge_project = 'ruote'
 
-task :rdoc do
-  sh %{
-    rm -fR ruote_dm_rdoc
-    yardoc 'lib/**/*.rb' -o ruote_dm_rdoc --title 'ruote-dm'
-  }
+  gem.test_file = 'test/test.rb'
+
+  gem.add_dependency 'ruote', ">= #{Ruote::Dm::VERSION}"
+  gem.add_dependency 'dm-core'
+  #gem.add_dependency 'dm-aggregates'
+  #gem.add_dependency 'dm-types'
+  gem.add_development_dependency 'yard', '>= 0'
+
+  # gemspec spec : http://www.rubygems.org/read/chapter/20
 end
+Jeweler::GemcutterTasks.new
 
-task :upload_rdoc => :rdoc do
-  sh %{
-    rsync -azv -e ssh \
-      ruote_dm_rdoc \
-      jmettraux@rubyforge.org:/var/www/gforge-projects/ruote/
-  }
-end
 
-task :change_version do
+#
+# DOC
 
-  version = ARGV.pop
-  `sedip "s/VERSION = '.*'/VERSION = '#{version}'/" lib/openwfe/version.rb`
-  `sedip "s/s.version = '.*'/s.version = '#{version}'/" ruote.gemspec`
-  exit 0 # prevent rake from triggering other tasks
-end
+begin
 
-Gem::PackageTask.new(gemspec) do |pkg|
-  #pkg.need_tar = true
-end
+  require 'yard'
 
-Rake::PackageTask.new('ruote-dm', gemspec.version) do |pkg|
-
-  pkg.need_zip = true
-  pkg.package_files = FileList[
-    'Rakefile',
-    '*.txt',
-    #'bin/**/*',
-    #'doc/**/*',
-    #'examples/**/*',
-    'lib/**/*',
-    'test/**/*'
-  ].to_a
-  #pkg.package_files.delete('rc.txt')
-  #pkg.package_files.delete('MISC.txt')
-  class << pkg
-    def package_name
-      "#{@name}-#{@version}-src"
-    end
+  YARD::Rake::YardocTask.new do |doc|
+    doc.options = [
+      '-o', 'html/ruote-dm', '--title',
+      "ruote-dm #{Ruote::Dm::VERSION}"
+    ]
   end
+
+rescue LoadError
+
+  task :yard do
+    abort "YARD is not available : sudo gem install yard"
+  end
+end
+
+
+#
+# TO THE WEB
+
+task :upload_website => [ :clean, :yard ] do
+
+  account = 'jmettraux@rubyforge.org'
+  webdir = '/var/www/gforge-projects/ruote'
+
+  sh "rsync -azv -e ssh html/ruote-dm #{account}:#{webdir}/"
 end
 

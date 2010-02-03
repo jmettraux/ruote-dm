@@ -15,6 +15,3 @@
 [ ] dmParticipant : used Ruote::Json.encode(o)
 [ ] use type Object ? / JSON / text
 
-[ ] DmErrorJournal
-[ ] DmHistory
-
