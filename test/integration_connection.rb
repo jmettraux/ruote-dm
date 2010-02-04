@@ -18,10 +18,10 @@ def new_storage (opts)
   #DataMapper.setup(:default, 'sqlite3::memory:')
   #DataMapper.setup(:default, 'sqlite3:ruote_test.db')
 
-  if ARGV.include?('-log')
+  if ARGV.include?('-dmlog')
     DataMapper::Logger.new(STDOUT, :debug)
-    #FileUtils.rm('dm_debug.log') rescue nil
-    #DataMapper::Logger.new('dm_debug.log', :debug)
+    #FileUtils.rm('debug.log') rescue nil
+    #DataMapper::Logger.new('debug.log', :debug)
   end
 
   DataMapper.repository(:default) do
