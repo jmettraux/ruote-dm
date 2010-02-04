@@ -22,6 +22,7 @@
 # Made in Japan.
 #++
 
+require 'dm-core'
 require 'ruote/storage/base'
 require 'ruote/dm/version'
 
@@ -29,42 +30,105 @@ require 'ruote/dm/version'
 module Ruote
 module Dm
 
+  class Document
+    include DataMapper::Resource
+
+    property :ide, String, :key => true, :required => true
+    property :rev, Integer, :key => true, :required => true
+    property :typ, String, :key => true, :required => true
+    property :doc, Text, :length => 2**32 - 1, :required => true, :lazy => false
+  end
+
   class DmStorage
 
     include Ruote::StorageBase
 
     attr_reader :repository
 
-    def initialize (repository=nil, opts={})
+    def initialize (repository=nil, options={})
 
+      @options = options
       @repository = repository
+
+      put_configuration
     end
 
     def put (doc, opts={})
 
-      #@dbs[doc['type']].put(doc, opts)
+      DataMapper.repository(@repository) do
+
+        d = Document.first(:ide => doc['_id'], :typ => doc['type'])
+
+        return Rufus::Json.decode(d.doc) if d && d.rev != doc['_rev']
+
+        if doc['_rev'].nil?
+
+          Document.new(
+            :ide => doc['_id'],
+            :rev => 0,
+            :typ => doc['type'],
+            :doc => Rufus::Json.encode(doc.merge('_rev' => 0))
+          ).save
+
+          doc['_rev'] = 0 if opts[:update_rev]
+
+          return nil
+
+        else
+
+          return true unless d
+
+          d.rev = d.rev + 1
+          d.doc = Rufus::Json.encode(doc)
+          d.save
+
+          doc['_rev'] = d.rev if opts[:update_rev]
+
+          return nil
+        end
+      end
     end
 
     def get (type, key)
 
-      #@dbs[type].get(key)
+      DataMapper.repository(@repository) do
+        d = Document.first(:typ => type, :ide => key)
+        d ? Rufus::Json.decode(d.doc) : nil
+      end
     end
 
     def delete (doc)
 
-      #db = @dbs[doc['type']]
-      #raise ArgumentError.new("no database for type '#{doc['type']}'") unless db
-      #db.delete(doc)
+      raise ArgumentError.new('no _rev for doc') unless doc['_rev']
+
+      DataMapper.repository(@repository) do
+
+        d = Document.first(
+          :typ => doc['type'], :ide => doc['_id'], :rev => doc['_rev'])
+
+        return true unless d
+
+        d.destroy!
+
+        nil
+      end
     end
 
     def get_many (type, key=nil, opts={})
 
-      #@dbs[type].get_many(key, opts)
+      q = { :typ => type }
+
+      DataMapper.repository(@repository) do
+        Document.all(q).collect { |d| Rufus::Json.decode(d.doc) }
+      end
     end
 
-    #def ids (type)
-    #  #@dbs[type].ids
-    #end
+    def ids (type)
+
+      DataMapper.repository(@repository) do
+        Document.all(:typ => type).collect { |d| d.ide }
+      end
+    end
 
     def purge!
 
@@ -82,18 +146,18 @@ module Dm
 
     # Mainly used by ruote's test/unit/ut_17_storage.rb
     #
-    #def add_type (type)
-    #  @dbs[type] = Database.new(
-    #    @host, @port, type, "#{@prefix}ruote_#{type}", false)
-    #end
+    def add_type (type)
+
+      # does nothing, types are differentiated by the 'typ' column
+    end
 
     # Nukes a db type and reputs it (losing all the documents that were in it).
     #
     def purge_type! (type)
 
-      #if db = @dbs[type]
-      #  db.purge_docs!
-      #end
+      DataMapper.repository(@repository) do
+        Document.all(:typ => type).destroy!
+      end
     end
 
     # A provision made for workitems, allow to query them directly by
@@ -110,6 +174,21 @@ module Dm
       #raise NotImplementedError if type != 'workitems'
       #@dbs['workitems'].by_field(field, value)
     end
+
+    protected
+
+    # Don't put configuration if it's already in
+    #
+    # (avoid storages from trashing configuration...)
+    #
+    def put_configuration
+
+      return if get('configurations', 'engine')
+
+      conf = { '_id' => 'engine', 'type' => 'configurations' }.merge!(@options)
+      put(conf)
+    end
   end
+end
 end
 
