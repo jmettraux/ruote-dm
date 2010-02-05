@@ -11,10 +11,11 @@ Rufus::Json.detect_backend
 
 require 'ruote-dm'
 
-if ARGV.include?('-log')
-  #DataMapper::Logger.new(STDOUT, :debug)
+if ARGV.include?('-l')
   FileUtils.rm('debug.log') rescue nil
   DataMapper::Logger.new('debug.log', :debug)
+elsif ARGV.include?('-v')
+  DataMapper::Logger.new(STDOUT, :debug)
 end
 
 DataMapper.setup(:default, 'postgres://localhost/ruote_test')

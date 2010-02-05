@@ -72,20 +72,18 @@ module Dm
 
           doc['_rev'] = 0 if opts[:update_rev]
 
-          return nil
-
         else
 
           return true unless d
 
           d.rev = d.rev + 1
-          d.doc = Rufus::Json.encode(doc)
+          d.doc = Rufus::Json.encode(doc.merge('_rev' => d.rev))
           d.save
 
           doc['_rev'] = d.rev if opts[:update_rev]
-
-          return nil
         end
+
+        nil
       end
     end
 
