@@ -34,6 +34,6 @@ def new_storage (opts)
     Ruote::Dm::Document.all.destroy!
   end
 
-  Ruote::Dm::DmStorage.new(:default)
+  Ruote::Dm::DmStorage.new(:default, opts)
 end
 

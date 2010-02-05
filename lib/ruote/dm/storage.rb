@@ -198,7 +198,7 @@ module Dm
 
       return if get('configurations', 'engine')
 
-      conf = { '_id' => 'engine', 'type' => 'configurations' }.merge!(@options)
+      conf = { '_id' => 'engine', 'type' => 'configurations' }.merge(@options)
       put(conf)
     end
   end
