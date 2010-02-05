@@ -1,7 +1,6 @@
 
 = ruote-dm CREDITS.txt
 
-
 == authors
 
 - John Mettraux  http://jmettraux.wordpress.com
