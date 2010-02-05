@@ -67,7 +67,8 @@ module Dm
             :ide => doc['_id'],
             :rev => 0,
             :typ => doc['type'],
-            :doc => Rufus::Json.encode(doc.merge('_rev' => 0))
+            :doc => Rufus::Json.encode(doc.merge(
+              '_rev' => 0, 'put_at' => Ruote.now_to_utc_s))
           ).save
 
           doc['_rev'] = 0 if opts[:update_rev]
@@ -77,7 +78,8 @@ module Dm
           return true unless d
 
           d.rev = d.rev + 1
-          d.doc = Rufus::Json.encode(doc.merge('_rev' => d.rev))
+          d.doc = Rufus::Json.encode(doc.merge(
+            '_rev' => d.rev, 'put_at' => Ruote.now_to_utc_s))
           d.save
 
           doc['_rev'] = d.rev if opts[:update_rev]
@@ -114,11 +116,24 @@ module Dm
 
     def get_many (type, key=nil, opts={})
 
+      #p [ type, key ]
+
+      # TODO : :limit
+
       q = { :typ => type }
 
-      DataMapper.repository(@repository) do
+      hs = DataMapper.repository(@repository) do
         Document.all(q).collect { |d| Rufus::Json.decode(d.doc) }
       end
+
+      #puts "-- got many --"
+      #hs.each do |h|
+      #  puts
+      #  p h
+      #end
+      #puts
+
+      hs
     end
 
     def ids (type)
