@@ -118,9 +118,11 @@ module Dm
 
       #p [ type, key ]
 
-      # TODO : :limit
-
       q = { :typ => type }
+
+      if l = opts[:limit]
+        q[:limit] = l
+      end
 
       hs = DataMapper.repository(@repository) do
         Document.all(q).collect { |d| Rufus::Json.decode(d.doc) }
