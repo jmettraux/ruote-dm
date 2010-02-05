@@ -14,7 +14,7 @@ require 'ruote-dm'
 if ARGV.include?('-l')
   FileUtils.rm('debug.log') rescue nil
   DataMapper::Logger.new('debug.log', :debug)
-elsif ARGV.include?('-v')
+elsif ARGV.include?('-ls')
   DataMapper::Logger.new(STDOUT, :debug)
 end
 
