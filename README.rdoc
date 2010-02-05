@@ -11,6 +11,23 @@ well...
 
 == running tests
 
+assuming you have
+
+  ruote/
+  ruote-dm/
+
+* unit tests :
+
+get into ruote/ and do
+
+  ruby test/unit/storage.rb --dm
+
+* functional tests :
+
+get into ruote/ and do
+
+  ruby test/functional/test.rb --dm
+
 
 == license
 
@@ -20,7 +37,9 @@ MIT
 == links
 
 http://datamapper.org/
+
 http://ruote.rubyforge.org/
+http://github.com/jmettraux/ruote-dm
 
 
 == feedback

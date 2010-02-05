@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Mettraux"]
-  s.date = %q{2010-02-03}
+  s.date = %q{2010-02-05}
   s.description = %q{datamapper storage for ruote 2.1}
   s.email = %q{jmettraux@gmail.com}
   s.extra_rdoc_files = [
@@ -23,23 +23,12 @@ Gem::Specification.new do |s|
      "README.rdoc",
      "Rakefile",
      "TODO.txt",
-     "lib/ruote/dm/engine.rb",
-     "lib/ruote/dm/engine/dm_engine.rb",
-     "lib/ruote/dm/err/dm_errorjournal.rb",
-     "lib/ruote/dm/part/dm_participant.rb",
-     "lib/ruote/dm/storage/dm_storage.rb",
-     "lib/ruote/dm/ticket.rb",
+     "lib/ruote-dm.rb",
+     "lib/ruote/dm/storage.rb",
      "lib/ruote/dm/version.rb",
      "ruote-dm.gemspec",
-     "test/ft_1_participant.rb",
-     "test/ft_2_ejournal.rb",
-     "test/integration_connection.rb",
-     "test/path_helper.rb",
-     "test/test.rb",
-     "test/test_helper.rb",
-     "test/ut_0_storage.rb",
-     "test/ut_1_participant.rb",
-     "test/ut_2_ticket.rb"
+     "test/README.txt",
+     "test/integration_connection.rb"
   ]
   s.homepage = %q{http://github.com/jmettraux/ruote-dm}
   s.rdoc_options = ["--charset=UTF-8"]
