@@ -1,17 +1,4 @@
 
-[o] storage (expressions)
-[o] storage : find_expressions
-[o] add 'key_field' string column to DmWorkitem
-[o] add ability to swap DmWorkitem when initializing DmParticipant
-[o] part : control #save result
-[o] storage : control #save result
-[o] upgrade to dm 0.10.0
-
-[o] DmParticipant (workitems)
-[ ] scheduler
-[ ] event tracker
-
-[o] dmParticipant : switched to JSON for fields
-[ ] dmParticipant : used Ruote::Json.encode(o)
-[ ] use type Object ? / JSON / text
+[ ] storage : control #save result
+[ ] examine indices (participant_name ?)
 

@@ -37,6 +37,8 @@ module Dm
     property :rev, Integer, :key => true, :required => true
     property :typ, String, :key => true, :required => true
     property :doc, Text, :length => 2**32 - 1, :required => true, :lazy => false
+
+    property :participant_name, String, :length => 512
   end
 
   class DmStorage
@@ -63,12 +65,13 @@ module Dm
 
         if doc['_rev'].nil?
 
-          Document.new(
+          d = Document.new(
             :ide => doc['_id'],
             :rev => 0,
             :typ => doc['type'],
             :doc => Rufus::Json.encode(doc.merge(
-              '_rev' => 0, 'put_at' => Ruote.now_to_utc_s))
+              '_rev' => 0, 'put_at' => Ruote.now_to_utc_s)),
+            :participant_name => doc['participant_name']
           ).save
 
           doc['_rev'] = 0 if opts[:update_rev]
@@ -145,7 +148,9 @@ module Dm
 
     def purge!
 
-      #@dbs.values.each { |db| db.purge! }
+      DataMapper.repository(@repository) do
+        Document.all.destroy!
+      end
     end
 
     #def dump (type)
@@ -178,14 +183,26 @@ module Dm
     #
     def by_participant (type, participant_name)
 
-      #raise NotImplementedError if type != 'workitems'
-      #@dbs['workitems'].by_participant(participant_name)
+      raise NotImplementedError if type != 'workitems'
+
+      Document.all(
+        :typ => type, :participant_name => participant_name
+      ).collect { |d|
+        Rufus::Json.decode(d.doc)
+      }
     end
 
     def by_field (type, field, value=nil)
 
-      #raise NotImplementedError if type != 'workitems'
+      raise NotImplementedError if type != 'workitems'
       #@dbs['workitems'].by_field(field, value)
+
+      #Document.all(
+      #  :typ => type,
+      #  :doc.like => "%\"participant_name\":\"#{participant_name}\"%"
+      #).collect { |d|
+      #  Rufus::Json.decode(d.doc)
+      #}
     end
 
     protected
