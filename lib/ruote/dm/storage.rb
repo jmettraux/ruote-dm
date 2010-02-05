@@ -116,26 +116,24 @@ module Dm
 
     def get_many (type, key=nil, opts={})
 
-      #p [ type, key ]
-
       q = { :typ => type }
 
       if l = opts[:limit]
         q[:limit] = l
       end
 
-      hs = DataMapper.repository(@repository) do
-        Document.all(q).collect { |d| Rufus::Json.decode(d.doc) }
+      if key
+        key = if m = key.source.match(/(.+)\$$/)
+          "%#{m[1]}"
+        else
+          key
+        end
+        q[:ide.like] = key
       end
 
-      #puts "-- got many --"
-      #hs.each do |h|
-      #  puts
-      #  p h
-      #end
-      #puts
-
-      hs
+      DataMapper.repository(@repository) do
+        Document.all(q).collect { |d| Rufus::Json.decode(d.doc) }
+      end
     end
 
     def ids (type)
