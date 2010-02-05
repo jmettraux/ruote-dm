@@ -128,6 +128,8 @@ module Dm
       if key
         key = if m = key.source.match(/(.+)\$$/)
           "%#{m[1]}"
+        elsif m = key.source.match(/^\^(.+)/)
+          "#{m[1]}%"
         else
           key
         end
@@ -192,17 +194,19 @@ module Dm
       }
     end
 
+    # Querying workitems by field (warning, goes deep into the JSON structure)
+    #
     def by_field (type, field, value=nil)
 
       raise NotImplementedError if type != 'workitems'
-      #@dbs['workitems'].by_field(field, value)
 
-      #Document.all(
-      #  :typ => type,
-      #  :doc.like => "%\"participant_name\":\"#{participant_name}\"%"
-      #).collect { |d|
-      #  Rufus::Json.decode(d.doc)
-      #}
+      like = [ '%"', field, '":' ]
+      like.push(Rufus::Json.encode(value)) if value
+      like.push('%')
+
+      Document.all(:typ => type, :doc.like => like.join).collect { |d|
+        Rufus::Json.decode(d.doc)
+      }
     end
 
     protected
