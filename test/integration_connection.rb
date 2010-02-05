@@ -24,7 +24,6 @@ DataMapper.setup(:default, 'postgres://localhost/ruote_test')
 
 DataMapper.repository(:default) do
   Ruote::Dm::Document.auto_upgrade!
-  Ruote::Dm::Document.all.destroy!
 end
 
 
