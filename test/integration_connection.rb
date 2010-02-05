@@ -11,21 +11,25 @@ Rufus::Json.detect_backend
 
 require 'ruote-dm'
 
+if ARGV.include?('-log')
+  #DataMapper::Logger.new(STDOUT, :debug)
+  FileUtils.rm('debug.log') rescue nil
+  DataMapper::Logger.new('debug.log', :debug)
+end
+
+DataMapper.setup(:default, 'postgres://localhost/ruote_test')
+#DataMapper.setup(:default, 'sqlite3::memory:')
+#DataMapper.setup(:default, 'sqlite3:ruote_test.db')
+
+DataMapper.repository(:default) do
+  Ruote::Dm::Document.auto_upgrade!
+  Ruote::Dm::Document.all.destroy!
+end
+
 
 def new_storage (opts)
 
-  DataMapper.setup(:default, 'postgres://localhost/ruote_test')
-  #DataMapper.setup(:default, 'sqlite3::memory:')
-  #DataMapper.setup(:default, 'sqlite3:ruote_test.db')
-
-  if ARGV.include?('-dmlog')
-    DataMapper::Logger.new(STDOUT, :debug)
-    #FileUtils.rm('debug.log') rescue nil
-    #DataMapper::Logger.new('debug.log', :debug)
-  end
-
   DataMapper.repository(:default) do
-    Ruote::Dm::Document.auto_upgrade!
     Ruote::Dm::Document.all.destroy!
   end
 
