@@ -22,16 +22,12 @@ DataMapper.setup(:default, 'postgres://localhost/ruote_test')
 #DataMapper.setup(:default, 'sqlite3::memory:')
 #DataMapper.setup(:default, 'sqlite3:ruote_test.db')
 
-DataMapper.repository(:default) do
-  Ruote::Dm::Document.auto_upgrade!
-end
-
+#DataMapper.repository(:default) do
+#  Ruote::Dm::Document.all.destroy!
+#  Ruote::Dm::Document.auto_upgrade!
+#end
 
 def new_storage (opts)
-
-  DataMapper.repository(:default) do
-    Ruote::Dm::Document.all.destroy!
-  end
 
   Ruote::Dm::DmStorage.new(:default, opts)
 end
