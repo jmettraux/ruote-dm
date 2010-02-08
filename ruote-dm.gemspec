@@ -27,7 +27,8 @@ Gem::Specification.new do |s|
      "lib/ruote/dm/storage.rb",
      "lib/ruote/dm/version.rb",
      "ruote-dm.gemspec",
-     "test/integration_connection.rb"
+     "test/integration_connection.rb",
+     "test/test.rb"
   ]
   s.homepage = %q{http://github.com/jmettraux/ruote-dm}
   s.rdoc_options = ["--charset=UTF-8"]
