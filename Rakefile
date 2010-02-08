@@ -21,9 +21,9 @@ Jeweler::Tasks.new do |gem|
 
   gem.version = Ruote::Dm::VERSION
   gem.name = 'ruote-dm'
-  gem.summary = 'datamapper storage for ruote 2.1'
+  gem.summary = 'datamapper storage for ruote (a ruby workflow engine)'
   gem.description = %{
-datamapper storage for ruote 2.1
+datamapper storage for ruote (a ruby workflow engine)
   }.strip
   gem.email = 'jmettraux@gmail.com'
   gem.homepage = 'http://github.com/jmettraux/ruote-dm'
@@ -36,7 +36,8 @@ datamapper storage for ruote 2.1
   gem.add_dependency 'dm-core'
   #gem.add_dependency 'dm-aggregates'
   #gem.add_dependency 'dm-types'
-  gem.add_development_dependency 'yard', '>= 0'
+  gem.add_development_dependency 'yard'
+  gem.add_development_dependency 'jeweler'
 
   # gemspec spec : http://www.rubygems.org/read/chapter/20
 end
