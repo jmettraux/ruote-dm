@@ -2,5 +2,12 @@
 = ruote-dm - CHANGELOG.txt
 
 
-== ruote-dm 2.1.6    not yet released
+== ruote-dm 2.1.7    not yet released
+
+- implemented DmStorage#query_workitems
+
+
+== ruote-dm 2.1.6    released 2010/02/07
+
+- first release
 

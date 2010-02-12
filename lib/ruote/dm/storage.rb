@@ -41,6 +41,9 @@ module Dm
     property :participant_name, String, :length => 512
   end
 
+  #
+  # A datamapper-powered storage for ruote.
+  #
   class DmStorage
 
     include Ruote::StorageBase
@@ -206,6 +209,32 @@ module Dm
 
       Document.all(:typ => type, :doc.like => like.join).collect { |d|
         Rufus::Json.decode(d.doc)
+      }
+    end
+
+    def query_workitems (criteria)
+
+      offset = criteria.delete('offset')
+      limit = criteria.delete('limit')
+
+      wfid =
+        criteria.delete('wfid')
+      pname =
+        criteria.delete('participant_name') || criteria.delete('participant')
+
+      cr = { :typ => 'workitems' }
+
+      cr[:ide.like] = "%!#{wfid}" if wfid
+      cr[:offset] = offset if offset
+      cr[:limit] = limit if limit
+      cr[:participant_name] = pname if pname
+
+      criteria.each do |k, v|
+        cr[:doc.like] = "%\"#{k}\":#{Rufus::Json.encode(v)}%"
+      end
+
+      Document.all(cr).collect { |d|
+        Ruote::Workitem.new(Rufus::Json.decode(d.doc))
       }
     end
 
