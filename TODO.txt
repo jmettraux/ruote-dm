@@ -1,6 +1,6 @@
 
 [ ] storage : control #save result
-[ ] examine indices (participant_name ?)
+[ ] examine indices (index) (participant_name ?) perf perf perf
 
 [ ] investigate ct_0_ weakness
 

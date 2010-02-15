@@ -2,7 +2,7 @@
 = ruote-dm - CHANGELOG.txt
 
 
-== ruote-dm 2.1.7    not yet released
+== ruote-dm 2.1.7    released 2010/02/15
 
 - adapted to latest Ruote::StorageHistory
 - implemented DmStorage#query_workitems
