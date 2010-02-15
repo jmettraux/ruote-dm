@@ -129,14 +129,13 @@ module Dm
       end
 
       if key
-        key = if m = key.source.match(/(.+)\$$/)
+        q[:ide.like] = if m = key.source.match(/(.+)\$$/)
           "%#{m[1]}"
         elsif m = key.source.match(/^\^(.+)/)
           "#{m[1]}%"
         else
-          key
+          "%#{key.source}%"
         end
-        q[:ide.like] = key
       end
 
       DataMapper.repository(@repository) do

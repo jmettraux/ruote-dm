@@ -4,6 +4,7 @@
 
 == ruote-dm 2.1.7    not yet released
 
+- adapted to latest Ruote::StorageHistory
 - implemented DmStorage#query_workitems
 
 
