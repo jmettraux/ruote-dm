@@ -6,7 +6,22 @@ ruote 2.1 extension for DataMapper (dm) persistence
 
 == usage
 
-well...
+this is how a ruote engine is setup with a ruote-dm storage (postgres) and a worker :
+
+  require 'rubygems'
+  require 'json' # gem install json
+  require 'ruote'
+  require 'ruote-dm' # gem install ruote-dm
+  
+  #DataMapper.setup(:default, 'sqlite3::memory:')
+  #DataMapper.setup(:default, 'sqlite3:ruote_test.db')
+  DataMapper.setup(:default, 'postgres://localhost/ruote_test')
+  
+  engine = Ruote::Engine.new(
+    Ruote::Worker.new(
+      Ruote::Dm::DmStorage.new(:default)))
+
+  # ...
 
 
 == running tests
