@@ -37,6 +37,7 @@ datamapper storage for ruote (a ruby workflow engine)
   #gem.add_dependency 'dm-aggregates'
   #gem.add_dependency 'dm-types'
   gem.add_development_dependency 'yard'
+  gem.add_development_dependency 'rake'
   gem.add_development_dependency 'jeweler'
 
   # gemspec spec : http://www.rubygems.org/read/chapter/20
