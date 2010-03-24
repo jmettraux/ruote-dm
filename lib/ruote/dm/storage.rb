@@ -228,9 +228,12 @@ module Dm
       cr[:limit] = limit if limit
       cr[:participant_name] = pname if pname
 
-      criteria.each do |k, v|
-        cr[:doc.like] = "%\"#{k}\":#{Rufus::Json.encode(v)}%"
+      likes = criteria.collect do |k, v|
+        "%\"#{k}\":#{Rufus::Json.encode(v)}%"
       end
+      cr[:conditions] = [
+        ([ 'doc LIKE ?' ] * likes.size).join(' AND '), *likes
+      ] unless likes.empty?
 
       Document.all(cr).collect { |d|
         Ruote::Workitem.new(Rufus::Json.decode(d.doc))

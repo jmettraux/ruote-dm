@@ -1,4 +1,7 @@
 
+[o] [test/functional/ft_20_storage_participant.rb:176]: <1> expected but was <4>
+    not on ruby 1.9.1, but on ruby 1.8.7p72
+
 [ ] storage : control #save result
 [ ] examine indices (index) (participant_name ?) perf perf perf
 

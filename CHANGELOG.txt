@@ -4,6 +4,8 @@
 
 == ruote-dm 2.1.9    not yet released
 
+- storage participant queries with more than 1 field are now possible
+
 
 == ruote-dm 2.1.7    released 2010/02/15
 
