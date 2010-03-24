@@ -11,8 +11,6 @@ Rufus::Json.detect_backend
 
 require 'ruote-dm'
 
-p ARGV
-
 if ARGV.include?('-l') || ARGV.include?('--l')
   FileUtils.rm('debug.log') rescue nil
   DataMapper::Logger.new('debug.log', :debug)
