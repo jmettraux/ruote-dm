@@ -2,7 +2,7 @@
 = ruote-dm - CHANGELOG.txt
 
 
-== ruote-dm 2.1.9    not yet released
+== ruote-dm 2.1.9    released 2010/03/24
 
 - storage participant queries with more than 1 field are now possible
 
