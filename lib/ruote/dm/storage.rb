@@ -159,9 +159,7 @@ module Dm
 
         return true unless d
 
-        d.destroy!
-
-        nil
+        d.destroy! ? nil : true
       end
     end
 
