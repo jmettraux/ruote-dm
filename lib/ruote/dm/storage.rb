@@ -58,6 +58,51 @@ module Dm
       put_configuration
     end
 
+    def put_msg (action, options)
+
+      # put_msg is a unique action, no need for all the complexity of put
+
+      DataMapper.repository(@repository) do
+
+        doc = prepare_msg_doc(action, options)
+
+        d = Document.new(
+          :ide => doc['_id'],
+          :rev => 0,
+          :typ => 'msgs',
+          :doc => Rufus::Json.encode(doc.merge(
+            '_rev' => 0,
+            'put_at' => Ruote.now_to_utc_s))
+        ).save
+      end
+
+      nil
+    end
+
+    def put_schedule (flavour, owner_fei, s, msg)
+
+      # put_schedule is a unique action, no need for all the complexity of put
+
+      if doc = prepare_schedule_doc(flavour, owner_fei, s, msg)
+
+        DataMapper.repository(@repository) do
+
+          d = Document.new(
+            :ide => doc['_id'],
+            :rev => 0,
+            :typ => 'schedules',
+            :doc => Rufus::Json.encode(doc.merge(
+              '_rev' => 0,
+              'put_at' => Ruote.now_to_utc_s))
+          ).save
+
+          return doc['_id']
+        end
+      end
+
+      nil
+    end
+
     def put (doc, opts={})
 
       DataMapper.repository(@repository) do
