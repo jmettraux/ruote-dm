@@ -44,6 +44,19 @@ module Dm
   #
   # A datamapper-powered storage for ruote.
   #
+  #   require 'rubygems'
+  #   require 'json' # gem install json
+  #   require 'ruote'
+  #   require 'ruote-dm' # gem install ruote-dm
+  #
+  #   #DataMapper.setup(:default, 'sqlite3::memory:')
+  #   #DataMapper.setup(:default, 'sqlite3:ruote_test.db')
+  #   DataMapper.setup(:default, 'postgres://localhost/ruote_test')
+  #
+  #   engine = Ruote::Engine.new(
+  #     Ruote::Worker.new(
+  #       Ruote::Dm::DmStorage.new(:default)))
+  #
   class DmStorage
 
     include Ruote::StorageBase
@@ -68,10 +81,10 @@ module Dm
 
         d = Document.new(
           :ide => doc['_id'],
-          :rev => 0,
+          :rev => 1,
           :typ => 'msgs',
           :doc => Rufus::Json.encode(doc.merge(
-            '_rev' => 0,
+            '_rev' => 1,
             'put_at' => Ruote.now_to_utc_s))
         ).save
       end
@@ -89,10 +102,10 @@ module Dm
 
           d = Document.new(
             :ide => doc['_id'],
-            :rev => 0,
+            :rev => 1,
             :typ => 'schedules',
             :doc => Rufus::Json.encode(doc.merge(
-              '_rev' => 0,
+              '_rev' => 1,
               'put_at' => Ruote.now_to_utc_s))
           ).save
 
@@ -107,34 +120,29 @@ module Dm
 
       DataMapper.repository(@repository) do
 
-        d = Document.first(:ide => doc['_id'], :typ => doc['type'])
+        d = Document.first(
+          :typ => doc['type'], :ide => doc['_id'], :order => :rev.desc)
 
-        return Rufus::Json.decode(d.doc) if d && d.rev != doc['_rev']
+        rev = doc['_rev'].to_i
+        current_rev = d ? d.rev : 0
 
-        if doc['_rev'].nil?
+        return true if current_rev == 0 && rev > 0
+        return Rufus::Json.decode(d.doc) if d && rev != current_rev
 
-          d = Document.new(
-            :ide => doc['_id'],
-            :rev => 0,
-            :typ => doc['type'],
-            :doc => Rufus::Json.encode(doc.merge(
-              '_rev' => 0, 'put_at' => Ruote.now_to_utc_s)),
-            :participant_name => doc['participant_name']
-          ).save
+        nrev = rev + 1
 
-          doc['_rev'] = 0 if opts[:update_rev]
+        Document.new(
+          :ide => doc['_id'],
+          :rev => nrev,
+          :typ => doc['type'],
+          :doc => Rufus::Json.encode(doc.merge(
+            '_rev' => nrev, 'put_at' => Ruote.now_to_utc_s)),
+          :participant_name => doc['participant_name']
+        ).save
 
-        else
+        d.destroy! if d
 
-          return true unless d
-
-          d.rev = d.rev + 1
-          d.doc = Rufus::Json.encode(doc.merge(
-            '_rev' => d.rev, 'put_at' => Ruote.now_to_utc_s))
-          d.save
-
-          doc['_rev'] = d.rev if opts[:update_rev]
-        end
+        doc['_rev'] = nrev if opts[:update_rev]
 
         nil
       end
@@ -143,7 +151,7 @@ module Dm
     def get (type, key)
 
       DataMapper.repository(@repository) do
-        d = Document.first(:typ => type, :ide => key)
+        d = Document.first(:typ => type, :ide => key, :order => :rev.desc)
         d ? Rufus::Json.decode(d.doc) : nil
       end
     end
@@ -200,9 +208,15 @@ module Dm
       end
     end
 
-    #def dump (type)
-    #  @dbs[type].dump
-    #end
+    def dump (type)
+
+      s = "=== #{type} ===\n"
+
+      get_many(type).inject(s) do |s1, h|
+        s1 << "  #{Ruote::FlowExpressionId.to_storage_id(h['fei'])}"
+        s1 << " => #{h['original_tree'].first} #{h['_rev']}\n"
+      end
+    end
 
     def shutdown
 

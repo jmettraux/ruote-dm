@@ -5,6 +5,8 @@
 [ ] storage : control #save result
 [ ] examine indices (index) (participant_name ?) perf perf perf
 
-[ ] msgs / schedules : simplify like ruote-redis did
+[o] msgs / schedules : simplify like ruote-redis did
+[o] `--> init _rev at 1 (like ruote-redis)
+[ ] `--> then investigate ct_X weaknesses (transactions ?)
 [ ] `--> then investigate ct_X weaknesses
 
