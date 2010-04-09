@@ -33,7 +33,7 @@ module Dm
   class Document
     include DataMapper::Resource
 
-    property :ide, String, :key => true, :length => 700, :required => true
+    property :ide, String, :key => true, :length => 255, :required => true
     property :rev, Integer, :key => true, :required => true
     property :typ, String, :key => true, :required => true
     property :doc, Text, :length => 2**32 - 1, :required => true, :lazy => false

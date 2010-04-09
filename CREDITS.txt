@@ -9,6 +9,7 @@
 
 == contributors
 
+- irfn (debugging on MySQL)
 - asm (many bug reports)
 - Kenneth Kalmer (http://www.opensourcery.co.za/)
 
