@@ -39,6 +39,10 @@ module Dm
     property :doc, Text, :length => 2**32 - 1, :required => true, :lazy => false
 
     property :participant_name, String, :length => 512
+
+    def to_h
+      Rufus::Json.decode(doc)
+    end
   end
 
   #
@@ -120,39 +124,45 @@ module Dm
 
       DataMapper.repository(@repository) do
 
-        d = Document.first(
-          :typ => doc['type'], :ide => doc['_id'], :order => :rev.desc)
+        current = do_get(doc['type'], doc['_id'])
 
         rev = doc['_rev'].to_i
-        current_rev = d ? d.rev : 0
 
-        return true if current_rev == 0 && rev > 0
-        return Rufus::Json.decode(d.doc) if d && rev != current_rev
+        return true if current.nil? && rev > 0
+        return current.to_h if current && rev != current.rev
 
         nrev = rev + 1
 
-        Document.new(
-          :ide => doc['_id'],
-          :rev => nrev,
-          :typ => doc['type'],
-          :doc => Rufus::Json.encode(doc.merge(
-            '_rev' => nrev, 'put_at' => Ruote.now_to_utc_s)),
-          :participant_name => doc['participant_name']
-        ).save
+        begin
 
-        d.destroy! if d
+          Document.new(
+            :ide => doc['_id'],
+            :rev => nrev,
+            :typ => doc['type'],
+            :doc => Rufus::Json.encode(doc.merge(
+              '_rev' => nrev, 'put_at' => Ruote.now_to_utc_s)),
+            :participant_name => doc['participant_name']
+          ).save
 
-        doc['_rev'] = nrev if opts[:update_rev]
+          current.destroy! if current
 
-        nil
+          doc['_rev'] = nrev if opts[:update_rev]
+
+          return nil
+
+        rescue DataObjects::IntegrityError => ie
+          #p :clash
+        end
+
+        get(doc['type'], doc['_id'])
       end
     end
 
     def get (type, key)
 
       DataMapper.repository(@repository) do
-        d = Document.first(:typ => type, :ide => key, :order => :rev.desc)
-        d ? Rufus::Json.decode(d.doc) : nil
+        d = do_get(type, key)
+        d ? d.to_h : nil
       end
     end
 
@@ -165,9 +175,13 @@ module Dm
         d = Document.first(
           :typ => doc['type'], :ide => doc['_id'], :rev => doc['_rev'])
 
+        #p [ :true, doc['_id'], Thread.current.object_id.to_s[-3..-1] ] unless d
         return true unless d
 
         d.destroy! ? nil : true
+        #r = d.destroy! ? nil : true
+        #p [ r, doc['_id'], Thread.current.object_id.to_s[-3..-1] ]
+        #r
       end
     end
 
@@ -190,7 +204,7 @@ module Dm
       end
 
       DataMapper.repository(@repository) do
-        Document.all(q).collect { |d| Rufus::Json.decode(d.doc) }
+        Document.all(q).collect { |d| d.to_h }
       end
     end
 
@@ -249,7 +263,7 @@ module Dm
       Document.all(
         :typ => type, :participant_name => participant_name
       ).collect { |d|
-        Rufus::Json.decode(d.doc)
+        d.to_h
       }
     end
 
@@ -263,9 +277,7 @@ module Dm
       like.push(Rufus::Json.encode(value)) if value
       like.push('%')
 
-      Document.all(:typ => type, :doc.like => like.join).collect { |d|
-        Rufus::Json.decode(d.doc)
-      }
+      Document.all(:typ => type, :doc.like => like.join).collect { |d| d.to_h }
     end
 
     def query_workitems (criteria)
@@ -292,12 +304,15 @@ module Dm
         ([ 'doc LIKE ?' ] * likes.size).join(' AND '), *likes
       ] unless likes.empty?
 
-      Document.all(cr).collect { |d|
-        Ruote::Workitem.new(Rufus::Json.decode(d.doc))
-      }
+      Document.all(cr).collect { |d| d.to_h }
     end
 
     protected
+
+    def do_get (type, key)
+
+      Document.first(:typ => type, :ide => key, :order => :rev.desc)
+    end
 
     # Don't put configuration if it's already in
     #
