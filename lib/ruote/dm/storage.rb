@@ -30,6 +30,13 @@ require 'ruote/dm/version'
 module Ruote
 module Dm
 
+  #
+  # All the ruote data is stored in a single ruote_dm_document table.
+  #
+  # The doc/data itself is stored in the 'doc' column, as JSON.
+  #
+  # Yajl-ruby is recommended for fast {de|en}coding with JSON.
+  #
   class Document
     include DataMapper::Resource
 
@@ -172,16 +179,17 @@ module Dm
 
       DataMapper.repository(@repository) do
 
-        d = Document.first(
-          :typ => doc['type'], :ide => doc['_id'], :rev => doc['_rev'])
+        r = put(doc)
 
-        #p [ :true, doc['_id'], Thread.current.object_id.to_s[-3..-1] ] unless d
-        return true unless d
+        #p [ 0, true, doc['_id'], Thread.current.object_id.to_s[-3..-1] ] if r
 
-        d.destroy! ? nil : true
-        #r = d.destroy! ? nil : true
-        #p [ r, doc['_id'], Thread.current.object_id.to_s[-3..-1] ]
-        #r
+        return true unless r.nil?
+
+        r = Document.all(:typ => doc['type'], :ide => doc['_id']).destroy!
+
+        #p [ 1, r ? nil : true, doc['_id'], Thread.current.object_id.to_s[-3..-1] ]
+
+        r ? nil : true
       end
     end
 
