@@ -90,14 +90,7 @@ module Dm
 
         doc = prepare_msg_doc(action, options)
 
-        d = Document.new(
-          :ide => doc['_id'],
-          :rev => 1,
-          :typ => 'msgs',
-          :doc => Rufus::Json.encode(doc.merge(
-            '_rev' => 1,
-            'put_at' => Ruote.now_to_utc_s))
-        ).save
+        insert(doc, 1)
       end
 
       nil
@@ -107,24 +100,16 @@ module Dm
 
       # put_schedule is a unique action, no need for all the complexity of put
 
-      if doc = prepare_schedule_doc(flavour, owner_fei, s, msg)
+      doc = prepare_schedule_doc(flavour, owner_fei, s, msg)
 
-        DataMapper.repository(@repository) do
+      return nil unless doc
 
-          d = Document.new(
-            :ide => doc['_id'],
-            :rev => 1,
-            :typ => 'schedules',
-            :doc => Rufus::Json.encode(doc.merge(
-              '_rev' => 1,
-              'put_at' => Ruote.now_to_utc_s))
-          ).save
+      DataMapper.repository(@repository) do
 
-          return doc['_id']
-        end
+        insert(doc, 1)
+
+        doc['_id']
       end
-
-      nil
     end
 
     def put (doc, opts={})
@@ -142,14 +127,7 @@ module Dm
 
         begin
 
-          Document.new(
-            :ide => doc['_id'],
-            :rev => nrev,
-            :typ => doc['type'],
-            :doc => Rufus::Json.encode(doc.merge(
-              '_rev' => nrev, 'put_at' => Ruote.now_to_utc_s)),
-            :participant_name => doc['participant_name']
-          ).save
+          insert(doc, nrev)
 
           current.destroy! if current
 
@@ -316,6 +294,19 @@ module Dm
     end
 
     protected
+
+    def insert (doc, rev)
+
+      Document.new(
+        :ide => doc['_id'],
+        :rev => rev,
+        :typ => doc['type'],
+        :doc => Rufus::Json.encode(doc.merge(
+          '_rev' => rev,
+          'put_at' => Ruote.now_to_utc_s)),
+        :participant_name => doc['participant_name']
+      ).save!
+    end
 
     def do_get (type, key)
 
