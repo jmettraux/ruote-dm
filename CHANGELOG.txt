@@ -4,6 +4,7 @@
 
 == ruote-dm 2.1.10    not yet released
 
+- :ide key, :length => 255 for MySQL (thanks irfn)
 - _rev now starting at 1 (instead of 0)
 
 
