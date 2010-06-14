@@ -28,6 +28,9 @@ To create the tables in the database :
   Ruote::Dm::Document.auto_migrate!
 
 
+Tested with dm 0.9.2 and dm 1.0.0, with the postgresql and the msyql adapters.
+
+
 == running tests
 
 assuming you have

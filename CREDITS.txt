@@ -16,5 +16,5 @@
 
 == many thanks to
 
-- the DataMapper team
+- the DataMapper authors and contributors
 
