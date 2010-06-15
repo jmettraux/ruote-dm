@@ -11,3 +11,5 @@
 
 [ ] write example on how to use active-record to "read" workitems
 
+[ ] crunner.sh 2 weakness
+
