@@ -178,6 +178,9 @@ module Dm
       if l = opts[:limit]
         q[:limit] = l
       end
+      if s = opts[:skip]
+        q[:offset] = s
+      end
 
       if key
         q[:ide.like] = if m = key.source.match(/(.+)\$$/)
