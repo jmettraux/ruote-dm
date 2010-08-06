@@ -2,6 +2,9 @@
 = ruote-dm - CHANGELOG.txt
 
 
+== ruote-dm 2.1.11    not yet released
+
+
 == ruote-dm 2.1.10    released 2010/06/15
 
 - :ide key, :length => 255 for MySQL (thanks irfn)
