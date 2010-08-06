@@ -247,15 +247,15 @@ module Dm
     # A provision made for workitems, allow to query them directly by
     # participant name.
     #
-    def by_participant (type, participant_name)
+    def by_participant (type, participant_name, opts)
 
       raise NotImplementedError if type != 'workitems'
 
-      Document.all(
+      query = {
         :typ => type, :participant_name => participant_name
-      ).collect { |d|
-        d.to_h
-      }
+      }.merge(opts)
+
+      Document.all(query).collect { |d| d.to_h }
     end
 
     # Querying workitems by field (warning, goes deep into the JSON structure)
