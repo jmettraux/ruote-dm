@@ -190,7 +190,9 @@ module Dm
       end
 
       DataMapper.repository(@repository) do
-        Document.all(q).collect { |d| d.to_h }
+        opts[:count] ?
+          Document.all(q).count :
+          Document.all(q).collect { |d| d.to_h }
       end
     end
 

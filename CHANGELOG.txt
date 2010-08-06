@@ -4,6 +4,8 @@
 
 == ruote-dm 2.1.11    not yet released
 
+- get_many(x, y, :count => true) support
+
 
 == ruote-dm 2.1.10    released 2010/06/15
 
