@@ -45,6 +45,7 @@ module Dm
     property :typ, String, :key => true, :required => true
     property :doc, Text, :length => 2**32 - 1, :required => true, :lazy => false
 
+    property :wfid, String, :index => true
     property :participant_name, String, :length => 512
 
     def to_h
@@ -182,20 +183,18 @@ module Dm
         q[:offset] = s
       end
 
-      if key
-        q[:ide.like] = if m = key.source.match(/(.+)\$$/)
-          "%#{m[1]}"
-        elsif m = key.source.match(/^\^(.+)/)
-          "#{m[1]}%"
-        else
-          "%#{key.source}%"
-        end
-      end
+      keys = key ? Array(key) : nil
+      q[:wfid] = keys if keys && keys.first.is_a?(String)
 
       DataMapper.repository(@repository) do
-        opts[:count] ?
-          Document.all(q).count :
-          Document.all(q).collect { |d| d.to_h }
+
+        return Document.all(q).count if opts[:count]
+
+        docs = Document.all(q).collect { |d| d.to_h }
+
+        keys && keys.first.is_a?(Regexp) ?
+          docs.select { |doc| keys.find { |key| key.match(doc['_id']) } } :
+          docs
       end
     end
 
@@ -309,8 +308,14 @@ module Dm
         :doc => Rufus::Json.encode(doc.merge(
           '_rev' => rev,
           'put_at' => Ruote.now_to_utc_s)),
+        :wfid => extract_wfid(doc),
         :participant_name => doc['participant_name']
       ).save!
+    end
+
+    def extract_wfid (doc)
+
+      doc['wfid'] || (doc['fei'] ? doc['fei']['wfid'] : nil)
     end
 
     def do_get (type, key)

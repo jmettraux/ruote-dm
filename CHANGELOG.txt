@@ -4,6 +4,8 @@
 
 == ruote-dm 2.1.11    not yet released
 
+- adapted for engines.processes pagination
+- ! added 'wfi' column to Document table
 - workitems.by_participant() :skip and :limit support
 - get_many(x, y, :skip => 10) support
 - get_many(x, y, :count => true) support
