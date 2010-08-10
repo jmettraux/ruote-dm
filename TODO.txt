@@ -5,6 +5,7 @@
 [o] `--> init _rev at 1 (like ruote-redis)
 [o] `--> then investigate ct_X weaknesses (transactions ?)
 [o] `--> then investigate ct_X weaknesses
+[x] storage.close
 
 [ ] storage : control #save result
 [ ] examine indices (index) (participant_name ?) perf perf perf

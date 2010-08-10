@@ -176,12 +176,8 @@ module Dm
 
       q = { :typ => type }
 
-      if l = opts[:limit]
-        q[:limit] = l
-      end
-      if s = opts[:skip]
-        q[:offset] = s
-      end
+      if l = opts[:limit]; q[:limit] = l; end
+      if s = opts[:skip]; q[:offset] = s; end
 
       keys = key ? Array(key) : nil
       q[:wfid] = keys if keys && keys.first.is_a?(String)
@@ -190,7 +186,9 @@ module Dm
 
         return Document.all(q).count if opts[:count]
 
-        docs = Document.all(q).collect { |d| d.to_h }
+        docs = Document.all(q)
+        docs = docs.reverse if opts[:descending]
+        docs = docs.collect { |d| d.to_h }
 
         keys && keys.first.is_a?(Regexp) ?
           docs.select { |doc| keys.find { |key| key.match(doc['_id']) } } :
