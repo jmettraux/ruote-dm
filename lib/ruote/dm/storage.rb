@@ -270,6 +270,10 @@ module Dm
 
     def query_workitems (criteria)
 
+      cr = { :typ => 'workitems' }
+
+      return Document.all(cr).count if criteria['count']
+
       offset = criteria.delete('offset')
       limit = criteria.delete('limit')
 
@@ -277,8 +281,6 @@ module Dm
         criteria.delete('wfid')
       pname =
         criteria.delete('participant_name') || criteria.delete('participant')
-
-      cr = { :typ => 'workitems' }
 
       cr[:ide.like] = "%!#{wfid}" if wfid
       cr[:offset] = offset if offset
@@ -292,7 +294,7 @@ module Dm
         ([ 'doc LIKE ?' ] * likes.size).join(' AND '), *likes
       ] unless likes.empty?
 
-      Document.all(cr).collect { |d| d.to_h }
+      Document.all(cr).collect { |d| Ruote::Workitem.new(d.to_h) }
     end
 
     protected
