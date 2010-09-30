@@ -23,6 +23,7 @@ DataMapper.setup(:default, 'postgres://localhost/ruote_test')
 #DataMapper.setup(:default, 'sqlite3:ruote_test.db')
 
 #DataMapper.repository(:default) do
+#  require 'dm-migrations' # gem install dm-migrations
 #  Ruote::Dm::Document.all.destroy! rescue nil
 #  Ruote::Dm::Document.auto_upgrade!
 #end
