@@ -14,6 +14,7 @@
 
 == ruote-dm 2.1.10    released 2010/06/15
 
+- multi-workers hardened
 - :ide key, :length => 255 for MySQL (thanks irfn)
 - _rev now starting at 1 (instead of 0)
 

@@ -67,7 +67,7 @@ end
 #
 # TO THE WEB
 
-task :upload_website => [ :clean, :rdoc ] do
+task :upload_rdoc => [ :clean, :rdoc ] do
 
   account = 'jmettraux@rubyforge.org'
   webdir = '/var/www/gforge-projects/ruote'

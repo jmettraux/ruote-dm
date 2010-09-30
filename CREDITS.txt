@@ -3,16 +3,16 @@
 
 == authors
 
-- John Mettraux  http://jmettraux.wordpress.com
-- Jordan Ritter (http://github.com/jpr5)
+- John Mettraux - http://github.com/jmettraux
+- Jordan Ritter - http://github.com/jpr5
 
 
 == contributors
 
-- Torsten Schoenebaum
-- irfn (debugging on MySQL)
-- asm (many bug reports)
-- Kenneth Kalmer (http://www.opensourcery.co.za/)
+- Torsten Schoenebaum - http://github.com/tosch
+- Irfan (debugging on MySQL) - http://github.com/irfn
+- asm (many bug reports) - http://github.com/asm
+- Kenneth Kalmer - (http://www.opensourcery.co.za/)
 
 
 == many thanks to
