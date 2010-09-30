@@ -19,6 +19,7 @@ elsif ARGV.include?('-ls') || ARGV.include?('--ls')
 end
 
 DataMapper.setup(:default, 'postgres://localhost/ruote_test')
+#DataMapper.setup(:default, 'mysql://root:root@localhost/ruote_test')
 #DataMapper.setup(:default, 'sqlite3::memory:')
 #DataMapper.setup(:default, 'sqlite3:ruote_test.db')
 
