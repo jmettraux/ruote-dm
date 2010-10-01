@@ -51,6 +51,11 @@ get into ruote/ and do
   ruby test/functional/test.rb -- --dm
 
 
+== known issues
+
+It works well on OSX, but test/functional/ct_2_cancel.rb is failing. Since OSX isn't a often met server platform, we haven't investigated further.
+
+
 == license
 
 MIT
