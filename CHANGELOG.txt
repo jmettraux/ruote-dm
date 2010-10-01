@@ -2,7 +2,7 @@
 = ruote-dm - CHANGELOG.txt
 
 
-== ruote-dm 2.1.11    not yet released
+== ruote-dm 2.1.11    released 2010/10/01
 
 - get_many(x, y, descending => true)
 - adapted for engines.processes pagination

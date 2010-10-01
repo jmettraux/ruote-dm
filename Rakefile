@@ -34,6 +34,7 @@ datamapper storage for ruote (a ruby workflow engine)
 
   gem.add_dependency 'ruote', ">= #{Ruote::Dm::VERSION}"
   gem.add_dependency 'dm-core'
+  gem.add_dependency 'dm-migrations'
   #gem.add_dependency 'dm-aggregates'
   #gem.add_dependency 'dm-types'
   gem.add_development_dependency 'yard'
