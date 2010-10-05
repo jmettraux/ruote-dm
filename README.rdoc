@@ -25,6 +25,7 @@ This is how a ruote engine is setup with a ruote-dm storage (postgres) and a wor
 
 To create the tables in the database :
 
+  require 'dm-migrations'
   Ruote::Dm::Document.auto_migrate!
 
 
