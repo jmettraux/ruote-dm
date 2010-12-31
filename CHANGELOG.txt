@@ -2,6 +2,11 @@
 = ruote-dm - CHANGELOG.txt
 
 
+== ruote-dm 2.1.12    not yet released
+
+- simpler DmStorage#dump
+
+
 == ruote-dm 2.1.11    released 2010/10/01
 
 - get_many(x, y, descending => true)

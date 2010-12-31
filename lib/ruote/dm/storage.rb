@@ -212,12 +212,8 @@ module Dm
 
     def dump (type)
 
-      s = "=== #{type} ===\n"
-
-      get_many(type).inject(s) do |s1, h|
-        s1 << "  #{Ruote::FlowExpressionId.to_storage_id(h['fei'])}"
-        s1 << " => #{h['original_tree'].first} #{h['_rev']}\n"
-      end
+      "=== #{type} ===\n" +
+      get_many(type).map { |h| "  #{h['_id']} => #{h.inspect}" }.join("\n")
     end
 
     def shutdown
