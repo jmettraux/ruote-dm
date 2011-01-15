@@ -199,7 +199,7 @@ module Dm
     def ids (type)
 
       DataMapper.repository(@repository) do
-        Document.all(:typ => type).collect { |d| d.ide }
+        Document.all(:typ => type).collect { |d| d.ide }.sort
       end
     end
 
