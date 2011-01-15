@@ -69,7 +69,7 @@ module Dm
   #     Ruote::Worker.new(
   #       Ruote::Dm::DmStorage.new(:default)))
   #
-  class DmStorage
+  class Storage
 
     include Ruote::StorageBase
 
@@ -330,6 +330,13 @@ module Dm
       conf = { '_id' => 'engine', 'type' => 'configurations' }.merge(@options)
       put(conf)
     end
+  end
+
+  #
+  # Ruote::Dm::Storage should be used, but until ruote-dm 2.1.12, it
+  # was Ruote::Dm::DmStorage. This class is here for 'backward compatibility'.
+  #
+  class DmStorage < Storage
   end
 end
 end

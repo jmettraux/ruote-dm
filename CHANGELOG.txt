@@ -4,6 +4,7 @@
 
 == ruote-dm 2.1.12    not yet released
 
+- Ruote::Dm::Storage (keeping Ruote::Dm::DmStorage for a while)
 - making sure that Storage#ids returns a sorted result
 - simpler DmStorage#dump
 
