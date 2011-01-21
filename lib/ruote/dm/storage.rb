@@ -51,6 +51,10 @@ module Dm
     def to_h
       Rufus::Json.decode(doc)
     end
+
+    def <=> (other)
+      self.ide <=> other.ide
+    end
   end
 
   #
@@ -67,7 +71,7 @@ module Dm
   #
   #   engine = Ruote::Engine.new(
   #     Ruote::Worker.new(
-  #       Ruote::Dm::DmStorage.new(:default)))
+  #       Ruote::Dm::Storage.new(:default)))
   #
   class Storage
 
@@ -182,12 +186,16 @@ module Dm
       keys = key ? Array(key) : nil
       q[:wfid] = keys if keys && keys.first.is_a?(String)
 
+      q[:order] = (
+        opts[:descending] ? [ :ide.desc, :rev.desc ] : [ :ide.asc, :rev.asc ]
+      ) unless opts[:count]
+
       DataMapper.repository(@repository) do
 
-        return Document.all(q).count if opts[:count]
+        return select_last_revs(Document.all(q)).size if opts[:count]
 
         docs = Document.all(q)
-        docs = docs.reverse if opts[:descending]
+        docs = select_last_revs(docs, opts[:descending])
         docs = docs.collect { |d| d.to_h }
 
         keys && keys.first.is_a?(Regexp) ?
@@ -199,7 +207,7 @@ module Dm
     def ids (type)
 
       DataMapper.repository(@repository) do
-        Document.all(:typ => type).collect { |d| d.ide }.sort
+        Document.all(:typ => type).collect { |d| d.ide }.uniq.sort
       end
     end
 
@@ -248,7 +256,7 @@ module Dm
         :typ => type, :participant_name => participant_name
       }.merge(opts)
 
-      Document.all(query).collect { |d| d.to_h }
+      select_last_revs(Document.all(query)).collect { |d| d.to_h }
     end
 
     # Querying workitems by field (warning, goes deep into the JSON structure)
@@ -261,14 +269,16 @@ module Dm
       like.push(Rufus::Json.encode(value)) if value
       like.push('%')
 
-      Document.all(:typ => type, :doc.like => like.join).collect { |d| d.to_h }
+      select_last_revs(
+        Document.all(:typ => type, :doc.like => like.join)
+      ).collect { |d| d.to_h }
     end
 
     def query_workitems (criteria)
 
       cr = { :typ => 'workitems' }
 
-      return Document.all(cr).count if criteria['count']
+      return select_last_revs(Document.all(cr)).size if criteria['count']
 
       offset = criteria.delete('offset')
       limit = criteria.delete('limit')
@@ -290,7 +300,9 @@ module Dm
         ([ 'doc LIKE ?' ] * likes.size).join(' AND '), *likes
       ] unless likes.empty?
 
-      Document.all(cr).collect { |d| Ruote::Workitem.new(d.to_h) }
+      select_last_revs(
+        Document.all(cr)
+      ).collect { |d| Ruote::Workitem.new(d.to_h) }
     end
 
     protected
@@ -329,6 +341,13 @@ module Dm
 
       conf = { '_id' => 'engine', 'type' => 'configurations' }.merge(@options)
       put(conf)
+    end
+
+    def select_last_revs (docs, reverse=false)
+
+      docs = docs.inject({}) { |h, doc| h[doc.ide] = doc; h }.values.sort
+
+      reverse ? docs.reverse : docs
     end
   end
 
