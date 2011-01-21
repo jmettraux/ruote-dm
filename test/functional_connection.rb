@@ -31,6 +31,6 @@ DataMapper.setup(:default, 'postgres://localhost/ruote_test')
 
 def new_storage (opts)
 
-  Ruote::Dm::DmStorage.new(:default, opts)
+  Ruote::Dm::Storage.new(:default, opts)
 end
 
