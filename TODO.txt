@@ -6,11 +6,13 @@
 [o] `--> then investigate ct_X weaknesses (transactions ?)
 [o] `--> then investigate ct_X weaknesses
 [x] storage.close
+[x] crunner.sh 2 weakness... only weak on OSX
 
 [ ] storage : control #save result
 [ ] examine indices (index) (participant_name ?) perf perf perf
 
 [ ] write example on how to use active-record to "read" workitems
 
-[x] crunner.sh 2 weakness... only weak on OSX
+[ ] http://ruote-ci.s3.amazonaws.com/20110122_Sat_2002__1.9.2-p136_ruote-dm_mysql__FAILED.txt
+    is it that get_many returns "deleted" documents as well ?
 
