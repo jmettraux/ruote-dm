@@ -21,8 +21,8 @@ datamapper storage for ruote (a workflow engine)
     '*.gemspec', '*.txt', '*.rdoc', '*.md'
   ]
 
-  s.add_runtime_dependency 'dm-core'
-  s.add_runtime_dependency 'dm-migrations'
+  s.add_runtime_dependency 'dm-core', '1.0.2'
+  s.add_runtime_dependency 'dm-migrations', '1.0.2'
   s.add_runtime_dependency 'ruote', ">= #{s.version}"
 
   s.add_development_dependency 'rake'
