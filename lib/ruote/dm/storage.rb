@@ -52,7 +52,7 @@ module Dm
       Rufus::Json.decode(doc)
     end
 
-    def <=> (other)
+    def <=>(other)
       self.ide <=> other.ide
     end
   end
@@ -79,7 +79,7 @@ module Dm
 
     attr_reader :repository
 
-    def initialize (repository=nil, options={})
+    def initialize(repository=nil, options={})
 
       @options = options
       @repository = repository
@@ -87,7 +87,7 @@ module Dm
       put_configuration
     end
 
-    def put_msg (action, options)
+    def put_msg(action, options)
 
       # put_msg is a unique action, no need for all the complexity of put
 
@@ -101,7 +101,7 @@ module Dm
       nil
     end
 
-    def put_schedule (flavour, owner_fei, s, msg)
+    def put_schedule(flavour, owner_fei, s, msg)
 
       # put_schedule is a unique action, no need for all the complexity of put
 
@@ -117,7 +117,7 @@ module Dm
       end
     end
 
-    def put (doc, opts={})
+    def put(doc, opts={})
 
       DataMapper.repository(@repository) do
 
@@ -148,7 +148,7 @@ module Dm
       end
     end
 
-    def get (type, key)
+    def get(type, key)
 
       DataMapper.repository(@repository) do
         d = do_get(type, key)
@@ -156,7 +156,7 @@ module Dm
       end
     end
 
-    def delete (doc)
+    def delete(doc)
 
       raise ArgumentError.new('no _rev for doc') unless doc['_rev']
 
@@ -176,7 +176,7 @@ module Dm
       end
     end
 
-    def get_many (type, key=nil, opts={})
+    def get_many(type, key=nil, opts={})
 
       q = { :typ => type }
 
@@ -204,7 +204,7 @@ module Dm
       end
     end
 
-    def ids (type)
+    def ids(type)
 
       DataMapper.repository(@repository) do
         Document.all(:typ => type).collect { |d| d.ide }.uniq.sort
@@ -218,7 +218,7 @@ module Dm
       end
     end
 
-    def dump (type)
+    def dump(type)
 
       "=== #{type} ===\n" +
       get_many(type).map { |h| "  #{h['_id']} => #{h.inspect}" }.join("\n")
@@ -231,14 +231,14 @@ module Dm
 
     # Mainly used by ruote's test/unit/ut_17_storage.rb
     #
-    def add_type (type)
+    def add_type(type)
 
       # does nothing, types are differentiated by the 'typ' column
     end
 
     # Nukes a db type and reputs it (losing all the documents that were in it).
     #
-    def purge_type! (type)
+    def purge_type!(type)
 
       DataMapper.repository(@repository) do
         Document.all(:typ => type).destroy!
@@ -248,7 +248,7 @@ module Dm
     # A provision made for workitems, allow to query them directly by
     # participant name.
     #
-    def by_participant (type, participant_name, opts)
+    def by_participant(type, participant_name, opts)
 
       raise NotImplementedError if type != 'workitems'
 
@@ -261,7 +261,7 @@ module Dm
 
     # Querying workitems by field (warning, goes deep into the JSON structure)
     #
-    def by_field (type, field, value=nil)
+    def by_field(type, field, value=nil)
 
       raise NotImplementedError if type != 'workitems'
 
@@ -274,7 +274,7 @@ module Dm
       ).collect { |d| d.to_h }
     end
 
-    def query_workitems (criteria)
+    def query_workitems(criteria)
 
       cr = { :typ => 'workitems' }
 
@@ -307,7 +307,7 @@ module Dm
 
     protected
 
-    def insert (doc, rev)
+    def insert(doc, rev)
 
       Document.new(
         :ide => doc['_id'],
@@ -321,12 +321,12 @@ module Dm
       ).save!
     end
 
-    def extract_wfid (doc)
+    def extract_wfid(doc)
 
       doc['wfid'] || (doc['fei'] ? doc['fei']['wfid'] : nil)
     end
 
-    def do_get (type, key)
+    def do_get(type, key)
 
       Document.first(:typ => type, :ide => key, :order => :rev.desc)
     end
@@ -343,7 +343,7 @@ module Dm
       put(conf)
     end
 
-    def select_last_revs (docs, reverse=false)
+    def select_last_revs(docs, reverse=false)
 
       docs = docs.inject({}) { |h, doc| h[doc.ide] = doc; h }.values.sort
 
