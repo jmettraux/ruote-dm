@@ -138,13 +138,17 @@ module Dm
 
           doc['_rev'] = nrev if opts[:update_rev]
 
-          return nil
+          return nil # success
 
         rescue DataObjects::IntegrityError => ie
-          #p :clash
+          #
+          # insertion failed, conflict
+          #
         end
 
-        get(doc['type'], doc['_id'])
+        # have to return the current doc or true if there is no current doc
+
+        get(doc['type'], doc['_id']) || true
       end
     end
 
@@ -166,7 +170,7 @@ module Dm
 
         #p [ 0, true, doc['_id'], Thread.current.object_id.to_s[-3..-1] ] if r
 
-        return true unless r.nil?
+        return true if r != nil
 
         r = Document.all(:typ => doc['type'], :ide => doc['_id']).destroy!
 
