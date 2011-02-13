@@ -93,9 +93,7 @@ module Dm
 
       DataMapper.repository(@repository) do
 
-        doc = prepare_msg_doc(action, options)
-
-        insert(doc, 1)
+        do_insert(prepare_msg_doc(action, options) , 1)
       end
 
       nil
@@ -111,7 +109,7 @@ module Dm
 
       DataMapper.repository(@repository) do
 
-        insert(doc, 1)
+        do_insert(doc, 1)
 
         doc['_id']
       end
@@ -121,41 +119,44 @@ module Dm
 
       DataMapper.repository(@repository) do
 
-        current = do_get(doc['type'], doc['_id'])
+        if doc['_rev']
 
-        rev = doc['_rev'].to_i
+          d = get(doc['type'], doc['_id'])
 
-        return true if current.nil? && rev > 0
-        return current.to_h if current && rev != current.rev
+          return true unless d
+          return d if d['_rev'] != doc['_rev']
+            # failures
+        end
 
-        nrev = rev + 1
+        nrev = doc['_rev'].to_i + 1
 
         begin
 
-          insert(doc, nrev)
-
-          current.destroy! if current
-
-          doc['_rev'] = nrev if opts[:update_rev]
-
-          return nil # success
+          do_insert(doc, nrev)
 
         rescue DataObjects::IntegrityError => ie
-          #
-          # insertion failed, conflict
-          #
+
+          return (get(doc['type'], doc['_id']) || true)
+            # failure
         end
 
-        # have to return the current doc or true if there is no current doc
+        Document.all(
+          :typ => doc['type'], :ide => doc['_id'], :rev.lt => nrev
+        ).destroy
 
-        get(doc['type'], doc['_id']) || true
+        doc['_rev'] = nrev if opts[:update_rev]
+
+        nil
+          # success
       end
     end
 
     def get(type, key)
 
       DataMapper.repository(@repository) do
+
         d = do_get(type, key)
+
         d ? d.to_h : nil
       end
     end
@@ -164,20 +165,13 @@ module Dm
 
       raise ArgumentError.new('no _rev for doc') unless doc['_rev']
 
-      DataMapper.repository(@repository) do
+      count = DataMapper.repository(@repository).adapter.delete(
+        Document.all(:typ => doc['type'], :ide => doc['_id']))
 
-        r = put(doc)
+      return (get(doc['type'], doc['_id']) || true) if count < 1
 
-        #p [ 0, true, doc['_id'], Thread.current.object_id.to_s[-3..-1] ] if r
-
-        return true if r != nil
-
-        r = Document.all(:typ => doc['type'], :ide => doc['_id']).destroy!
-
-        #p [ 1, r ? nil : true, doc['_id'], Thread.current.object_id.to_s[-3..-1] ]
-
-        r ? nil : true
-      end
+      nil
+        # success
     end
 
     def get_many(type, key=nil, opts={})
@@ -211,6 +205,7 @@ module Dm
     def ids(type)
 
       DataMapper.repository(@repository) do
+
         Document.all(:typ => type).collect { |d| d.ide }.uniq.sort
       end
     end
@@ -218,6 +213,7 @@ module Dm
     def purge!
 
       DataMapper.repository(@repository) do
+
         Document.all.destroy!
       end
     end
@@ -245,6 +241,7 @@ module Dm
     def purge_type!(type)
 
       DataMapper.repository(@repository) do
+
         Document.all(:typ => type).destroy!
       end
     end
@@ -311,7 +308,7 @@ module Dm
 
     protected
 
-    def insert(doc, rev)
+    def do_insert(doc, rev)
 
       Document.new(
         :ide => doc['_id'],
