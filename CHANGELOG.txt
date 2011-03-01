@@ -2,7 +2,7 @@
 = ruote-dm - CHANGELOG.txt
 
 
-== ruote-dm 2.2.0    not yet released
+== ruote-dm 2.2.0    released 2011/03/01
 
 - revised get_many (to avoid duplicates)
 - Ruote::Dm::Storage (keeping Ruote::Dm::DmStorage for a while)
