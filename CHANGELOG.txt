@@ -2,6 +2,11 @@
 = ruote-dm - CHANGELOG.txt
 
 
+== ruote-dm 2.2.1    not yet released
+
+- #query_workitems fixed missing :skip option (Thanks Eric Smith)
+
+
 == ruote-dm 2.2.0    released 2011/03/01
 
 - revised get_many (to avoid duplicates)

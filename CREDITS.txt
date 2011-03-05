@@ -1,6 +1,7 @@
 
 = ruote-dm CREDITS.txt
 
+
 == authors
 
 - John Mettraux - http://github.com/jmettraux
@@ -13,6 +14,11 @@
 - Irfan (debugging on MySQL) - http://github.com/irfn
 - asm (many bug reports) - http://github.com/asm
 - Kenneth Kalmer - (http://www.opensourcery.co.za/)
+
+
+== feedback
+
+- Eric Smith - missing :skip option
 
 
 == many thanks to

@@ -281,7 +281,7 @@ module Dm
 
       return select_last_revs(Document.all(cr)).size if criteria['count']
 
-      offset = criteria.delete('offset')
+      offset = criteria.delete('offset') || criteria.delete('skip')
       limit = criteria.delete('limit')
 
       wfid =
