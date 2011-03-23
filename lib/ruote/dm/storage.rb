@@ -253,16 +253,20 @@ module Dm
 
       raise NotImplementedError if type != 'workitems'
 
+      count = opts.delete(:count)
+
       query = {
         :typ => type, :participant_name => participant_name
       }.merge(opts)
 
-      select_last_revs(Document.all(query)).collect { |d| d.to_h }
+      res = select_last_revs(Document.all(query))
+
+      count ? res.size : res.collect { |d| d.to_h }
     end
 
     # Querying workitems by field (warning, goes deep into the JSON structure)
     #
-    def by_field(type, field, value=nil)
+    def by_field(type, field, value, opts)
 
       raise NotImplementedError if type != 'workitems'
 
@@ -270,16 +274,16 @@ module Dm
       like.push(Rufus::Json.encode(value)) if value
       like.push('%')
 
-      select_last_revs(
-        Document.all(:typ => type, :doc.like => like.join)
-      ).collect { |d| d.to_h }
+      res = select_last_revs(Document.all(:typ => type, :doc.like => like.join))
+
+      opts[:count] ? res.size : res.collect { |d| d.to_h }
     end
 
     def query_workitems(criteria)
 
       cr = { :typ => 'workitems' }
 
-      return select_last_revs(Document.all(cr)).size if criteria['count']
+      count = criteria.delete('count')
 
       offset = criteria.delete('offset') || criteria.delete('skip')
       limit = criteria.delete('limit')
@@ -294,16 +298,16 @@ module Dm
       cr[:limit] = limit if limit
       cr[:participant_name] = pname if pname
 
-      likes = criteria.collect do |k, v|
+      likes = criteria.collect { |k, v|
         "%\"#{k}\":#{Rufus::Json.encode(v)}%"
-      end
+      }
       cr[:conditions] = [
         ([ 'doc LIKE ?' ] * likes.size).join(' AND '), *likes
       ] unless likes.empty?
 
-      select_last_revs(
-        Document.all(cr)
-      ).collect { |d| Ruote::Workitem.new(d.to_h) }
+      res = select_last_revs(Document.all(cr))
+
+      count ? res.size : res.collect { |d| Ruote::Workitem.new(d.to_h) }
     end
 
     protected
