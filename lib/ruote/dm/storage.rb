@@ -255,6 +255,9 @@ module Dm
 
       count = opts.delete(:count)
 
+      skip = opts.delete(:skip)
+      opts[:offset] = skip if skip
+
       query = {
         :typ => type, :participant_name => participant_name
       }.merge(opts)
