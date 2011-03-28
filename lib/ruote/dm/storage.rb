@@ -52,6 +52,10 @@ module Dm
       Rufus::Json.decode(doc)
     end
 
+    def to_wi
+      Ruote::Workitem.from_json(doc)
+    end
+
     def <=>(other)
       self.ide <=> other.ide
     end
@@ -254,7 +258,6 @@ module Dm
       raise NotImplementedError if type != 'workitems'
 
       count = opts.delete(:count)
-
       skip = opts.delete(:skip)
       opts[:offset] = skip if skip
 
@@ -264,7 +267,7 @@ module Dm
 
       res = select_last_revs(Document.all(query))
 
-      count ? res.size : res.collect { |d| d.to_h }
+      count ? res.size : res.collect { |d| d.to_wi }
     end
 
     # Querying workitems by field (warning, goes deep into the JSON structure)
@@ -273,13 +276,18 @@ module Dm
 
       raise NotImplementedError if type != 'workitems'
 
+      count = opts.delete(:count)
+      skip = opts.delete(:skip)
+      opts[:offset] = skip if skip
+
       like = [ '%"', field, '":' ]
       like.push(Rufus::Json.encode(value)) if value
       like.push('%')
 
-      res = select_last_revs(Document.all(:typ => type, :doc.like => like.join))
+      res = Document.all({ :typ => type, :doc.like => like.join }.merge(opts))
+      res = select_last_revs(res)
 
-      opts[:count] ? res.size : res.collect { |d| d.to_h }
+      count ? res.size : res.collect { |d| d.to_wi }
     end
 
     def query_workitems(criteria)

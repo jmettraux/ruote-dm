@@ -4,7 +4,7 @@
 
 == ruote-dm 2.2.1    not yet released
 
-- StorageParticipant#by_participant :limit fix (Thanks Jan Topiński)
+- StorageParticipant#by_participant :skip and :limit fix (Thanks Jan Topiński)
 - StorageParticipant :count => true made consistent (Thanks Jan Topiński)
 - #query_workitems fixed missing :skip option (Thanks Eric Smith)
 
