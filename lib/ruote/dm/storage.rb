@@ -253,7 +253,7 @@ module Dm
     # A provision made for workitems, allow to query them directly by
     # participant name.
     #
-    def by_participant(type, participant_name, opts)
+    def by_participant(type, participant_name, opts={})
 
       raise NotImplementedError if type != 'workitems'
 
@@ -267,12 +267,12 @@ module Dm
 
       res = select_last_revs(Document.all(query))
 
-      count ? res.size : res.collect { |d| d.to_wi }
+      count ? res.size : res.collect { |d| d.to_h }
     end
 
     # Querying workitems by field (warning, goes deep into the JSON structure)
     #
-    def by_field(type, field, value, opts)
+    def by_field(type, field, value, opts={})
 
       raise NotImplementedError if type != 'workitems'
 
@@ -287,7 +287,7 @@ module Dm
       res = Document.all({ :typ => type, :doc.like => like.join }.merge(opts))
       res = select_last_revs(res)
 
-      count ? res.size : res.collect { |d| d.to_wi }
+      count ? res.size : res.collect { |d| d.to_h }
     end
 
     def query_workitems(criteria)
