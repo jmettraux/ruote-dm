@@ -267,7 +267,7 @@ module Dm
 
       res = select_last_revs(Document.all(query))
 
-      count ? res.size : res.collect { |d| d.to_h }
+      count ? res.size : res.collect { |d| d.to_wi }
     end
 
     # Querying workitems by field (warning, goes deep into the JSON structure)
@@ -287,7 +287,7 @@ module Dm
       res = Document.all({ :typ => type, :doc.like => like.join }.merge(opts))
       res = select_last_revs(res)
 
-      count ? res.size : res.collect { |d| d.to_h }
+      count ? res.size : res.collect { |d| d.to_wi }
     end
 
     def query_workitems(criteria)
@@ -318,7 +318,7 @@ module Dm
 
       res = select_last_revs(Document.all(cr))
 
-      count ? res.size : res.collect { |d| Ruote::Workitem.new(d.to_h) }
+      count ? res.size : res.collect { |d| d.to_wi }
     end
 
     protected
