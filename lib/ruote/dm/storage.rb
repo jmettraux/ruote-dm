@@ -85,10 +85,10 @@ module Dm
 
     def initialize(repository=nil, options={})
 
-      @options = options
+      #@options = options
       @repository = repository
 
-      put_configuration
+      replace_engine_configuration(options)
     end
 
     def put_msg(action, options)
@@ -345,18 +345,6 @@ module Dm
     def do_get(type, key)
 
       Document.first(:typ => type, :ide => key, :order => :rev.desc)
-    end
-
-    # Don't put configuration if it's already in
-    #
-    # (avoid storages from trashing configuration...)
-    #
-    def put_configuration
-
-      return if get('configurations', 'engine')
-
-      conf = { '_id' => 'engine', 'type' => 'configurations' }.merge(@options)
-      put(conf)
     end
 
     def select_last_revs(docs, reverse=false)

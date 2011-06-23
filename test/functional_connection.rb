@@ -29,7 +29,7 @@ DataMapper.setup(:default, 'postgres://localhost/ruote_test')
 #  Ruote::Dm::Document.auto_upgrade!
 #end
 
-def new_storage (opts)
+def new_storage(opts)
 
   Ruote::Dm::Storage.new(:default, opts)
 end
