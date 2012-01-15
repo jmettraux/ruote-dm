@@ -2,7 +2,7 @@
 = ruote-dm - CHANGELOG.txt
 
 
-== ruote-dm 2.2.1    not yet released
+== ruote-dm 2.3.0    not yet released
 
 - StorageParticipant#by_participant :skip and :limit fix (Thanks Jan Topiński)
 - StorageParticipant :count => true made consistent (Thanks Jan Topiński)

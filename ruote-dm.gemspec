@@ -1,4 +1,4 @@
-# encoding: utf-8
+# encoding: UTF-8
 
 Gem::Specification.new do |s|
 
@@ -25,8 +25,8 @@ datamapper storage for ruote (a workflow engine)
     '*.gemspec', '*.txt', '*.rdoc', '*.md'
   ]
 
-  s.add_runtime_dependency 'dm-core', '1.1.0'
-  s.add_runtime_dependency 'dm-migrations', '1.1.0'
+  s.add_runtime_dependency 'dm-core'#, '>= 1.1.0'
+  s.add_runtime_dependency 'dm-migrations'#, '>= 1.1.0'
   s.add_runtime_dependency 'ruote', ">= #{s.version}"
 
   s.add_development_dependency 'rake'
