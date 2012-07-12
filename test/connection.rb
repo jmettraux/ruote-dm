@@ -11,13 +11,17 @@ Rufus::Json.detect_backend
 
 require 'ruote-dm'
 
-if ARGV.include?('-l') || ARGV.include?('--l')
+debug = ENV['RUOTE_STORAGE_DEBUG']
+
+if debug == 'log'
   FileUtils.rm('debug.log') rescue nil
   DataMapper::Logger.new('debug.log', :debug)
-elsif ARGV.include?('-ls') || ARGV.include?('--ls')
+elsif debug == 'stdout'
   DataMapper::Logger.new(STDOUT, :debug)
 end
 
+# TODO: use ENV['RUOTE_STORAGE_URI'] or something like that
+#
 DataMapper.setup(:default, 'postgres://localhost/ruote_test')
 #DataMapper.setup(:default, 'mysql://root:root@localhost/ruote_test')
 #DataMapper.setup(:default, 'sqlite3::memory:')
