@@ -204,9 +204,11 @@ module Dm
         docs = select_last_revs(docs, opts[:descending])
         docs = docs.collect { |d| d.to_h }
 
-        keys && keys.first.is_a?(Regexp) ?
-          docs.select { |doc| keys.find { |key| key.match(doc['_id']) } } :
+        if keys && keys.first.is_a?(Regexp)
+          docs.select { |doc| keys.find { |key| key.match(doc['_id']) } }
+        else
           docs
+        end
       end
     end
 
