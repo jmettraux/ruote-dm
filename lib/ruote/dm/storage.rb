@@ -140,7 +140,7 @@ module Dm
 
         begin
 
-          do_insert(doc, nrev)
+          do_insert(doc, nrev, opts[:update_rev])
 
         rescue DataObjects::IntegrityError => ie
 
@@ -151,8 +151,6 @@ module Dm
         Document.all(
           :typ => doc['type'], :ide => doc['_id'], :rev.lt => nrev
         ).destroy
-
-        doc['_rev'] = nrev if opts[:update_rev]
 
         nil
           # success
@@ -323,15 +321,17 @@ module Dm
 
     protected
 
-    def do_insert(doc, rev)
+    def do_insert(doc, rev, update_rev=false)
+
+      doc = doc.send(
+        update_rev ? :merge! : :merge,
+        { '_rev' => rev, 'put_at' => Ruote.now_to_utc_s })
 
       Document.new(
         :ide => doc['_id'],
         :rev => rev,
         :typ => doc['type'],
-        :doc => Rufus::Json.encode(doc.merge(
-          '_rev' => rev,
-          'put_at' => Ruote.now_to_utc_s)),
+        :doc => Rufus::Json.encode(doc),
         :wfid => extract_wfid(doc),
         :participant_name => doc['participant_name']
       ).save!
