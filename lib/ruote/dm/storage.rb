@@ -226,12 +226,6 @@ module Dm
       end
     end
 
-    def dump(type)
-
-      "=== #{type} ===\n" +
-      get_many(type).map { |h| "  #{h['_id']} => #{h.inspect}" }.join("\n")
-    end
-
     def shutdown
 
       #@dbs.values.each { |db| db.shutdown }
