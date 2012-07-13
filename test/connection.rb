@@ -11,13 +11,12 @@ Rufus::Json.detect_backend
 
 require 'ruote-dm'
 
-debug = ENV['RUOTE_STORAGE_DEBUG']
-
-if debug == 'log'
-  FileUtils.rm('debug.log') rescue nil
-  DataMapper::Logger.new('debug.log', :debug)
-elsif debug == 'stdout'
-  DataMapper::Logger.new(STDOUT, :debug)
+case ENV['RUOTE_STORAGE_DEBUG']
+  when 'log'
+    FileUtils.rm('debug.log') rescue nil
+    DataMapper::Logger.new('debug.log', :debug)
+  when 'debug'
+    DataMapper::Logger.new(STDOUT, :debug)
 end
 
 # TODO: use ENV['RUOTE_STORAGE_URI'] or something like that
