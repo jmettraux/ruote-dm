@@ -1,9 +1,8 @@
 
-/!\ ======================================================================= /!\
+WARNING
 This project is not maintained anymore.
 Please use ruote-sequel instead
---> https:://github.com/jmettraux/ruote-sequel
-/!\ ======================================================================= /!\
+https:://github.com/jmettraux/ruote-sequel
 
 
 = ruote-dm
