@@ -1,8 +1,8 @@
 
 /!\ ======================================================================= /!\
-    This project is not maintained anymore.
-    Please use ruote-sequel instead
-    --> https:://github.com/jmettraux/ruote-sequel
+This project is not maintained anymore.
+Please use ruote-sequel instead
+--> https:://github.com/jmettraux/ruote-sequel
 /!\ ======================================================================= /!\
 
 
